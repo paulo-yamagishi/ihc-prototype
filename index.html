@@ -1,0 +1,3886 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CenaAtividade - Protótipo</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .phone-container {
+            width: 393px;
+            height: 852px;
+            background: #F5F5F5;
+            border-radius: 30px;
+            box-shadow: 0 10px 50px rgba(0,0,0,0.2);
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Status Bar */
+        .status-bar {
+            height: 44px;
+            background: #F5F5F5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+
+        .status-icons {
+            display: flex;
+            gap: 5px;
+        }
+
+        /* Header */
+        .header {
+            padding: 15px 20px;
+            background: #F5F5F5;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #E0E0E0;
+        }
+
+        .header h1 {
+            flex: 1;
+            text-align: left;
+            font-size: 20px;
+            color: #333;
+            margin-left: 53px;
+        }
+
+        .header-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .icon-btn {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            background: rgba(0,0,0,0.5);
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+        }
+
+        .icon-btn .material-icons {
+            font-size: 24px;
+        }
+
+        .icon-btn.active {
+            background: rgba(255, 183, 77, 0.9);
+            color: white;
+        }
+
+        /* Material Icons Customization */
+        .material-icons {
+            font-family: 'Material Icons';
+            font-weight: normal;
+            font-style: normal;
+            font-size: 24px;
+            display: inline-block;
+            line-height: 1;
+            text-transform: none;
+            letter-spacing: normal;
+            word-wrap: normal;
+            white-space: nowrap;
+            direction: ltr;
+            vertical-align: middle;
+            -webkit-font-smoothing: antialiased;
+            text-rendering: optimizeLegibility;
+            -moz-osx-font-smoothing: grayscale;
+            font-feature-settings: 'liga';
+        }
+
+        .material-icons.md-18 { font-size: 18px; }
+        .material-icons.md-20 { font-size: 20px; }
+        .material-icons.md-24 { font-size: 24px; }
+        .material-icons.md-36 { font-size: 36px; }
+        .material-icons.md-48 { font-size: 48px; }
+        .material-icons.md-60 { font-size: 60px; }
+
+        /* Screen Container */
+        .screen {
+            display: none;
+            height: calc(852px - 44px - 70px);
+            overflow-y: auto;
+        }
+
+        .screen.active {
+            display: block;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 70px;
+            background: #F5F5F5;
+            border-top: 1px solid #E0E0E0;
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+        }
+
+        .nav-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 28px;
+            color: #999;
+            padding: 12px 30px;
+            transition: color 0.3s;
+        }
+
+        .nav-btn .material-icons {
+            font-size: 32px;
+        }
+
+        .nav-btn.active {
+            color: #42A5F5;
+        }
+
+        /* Home Screen */
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin: 20px 20px 15px;
+            color: #333;
+        }
+
+        .horizontal-scroll {
+            display: flex;
+            gap: 15px;
+            padding: 0 20px;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .horizontal-scroll::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* Empty State */
+        .empty-state {
+            text-align: center;
+            padding: 30px 20px;
+            margin: 0 20px;
+        }
+
+        .empty-state .material-icons {
+            color: #42A5F5;
+            margin-bottom: 15px;
+            opacity: 0.5;
+        }
+
+        .empty-state p {
+            color: #666;
+            font-size: 15px;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .empty-state-subtitle {
+            color: #999 !important;
+            font-size: 14px !important;
+        }
+
+        .empty-state-vertical {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .empty-state-vertical .material-icons {
+            color: #42A5F5;
+            margin-bottom: 20px;
+            opacity: 0.5;
+        }
+
+        .empty-state-vertical p {
+            color: #666;
+            font-size: 15px;
+            margin: 10px 0;
+            line-height: 1.6;
+        }
+
+        .activity-card-small {
+            min-width: 280px;
+            height: 120px;
+            border-radius: 15px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .activity-card-small:hover {
+            transform: scale(1.02);
+        }
+
+        .activity-card-small::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.7));
+            border-radius: 15px;
+        }
+
+        .activity-card-small-content {
+            position: relative;
+            padding: 15px;
+            color: white;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+        }
+
+        .activity-card-small h3 {
+            font-size: 18px;
+            margin-bottom: 8px;
+            font-weight: 600;
+        }
+
+        .activity-card-small p {
+            font-size: 15px;
+            opacity: 0.9;
+        }
+
+        /* Search Section */
+        .search-section {
+            padding: 20px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+        }
+
+        .filter-btn {
+            padding: 12px 20px;
+            background: #42A5F5;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .filter-select {
+            width: 100%;
+            padding: 16px 16px;
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            font-family: inherit;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24'%3E%3Cpath fill='%2342A5F5' d='M7 10l5 5 5-5z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 12px center;
+            padding-right: 45px;
+            margin-bottom: 15px;
+        }
+
+        .filter-select:focus {
+            outline: none;
+            border-color: #42A5F5;
+            box-shadow: 0 0 0 3px rgba(66, 165, 245, 0.1);
+        }
+
+        .filter-select option {
+            padding: 12px;
+            font-size: 16px;
+        }
+
+        .filter-checkbox-container {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+            background: white;
+            padding: 14px 16px;
+            border-radius: 10px;
+            border: 2px solid #E0E0E0;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-checkbox-container:hover {
+            border-color: #42A5F5;
+        }
+
+        .filter-checkbox-container.checked {
+            background: #E3F2FD;
+            border-color: #42A5F5;
+        }
+
+        .filter-checkbox {
+            width: 24px;
+            height: 24px;
+            cursor: pointer;
+            accent-color: #42A5F5;
+        }
+
+        .filter-checkbox-label {
+            font-size: 16px;
+            font-weight: 500;
+            color: #333;
+            cursor: pointer;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            line-height: 1;
+        }
+
+        /* Chat Button */
+        .chat-button {
+            width: calc(100% - 40px);
+            margin: 20px 20px 15px;
+            padding: 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s;
+            background: #42A5F5;
+            color: white;
+            box-shadow: 0 4px 12px rgba(66, 165, 245, 0.2);
+        }
+
+        .chat-button:active {
+            transform: scale(0.98);
+        }
+
+        .chat-button .material-icons {
+            font-size: 24px;
+        }
+
+        .chat-button.hidden {
+            display: none;
+        }
+
+        /* Chat Screen */
+        .chat-container {
+            display: flex;
+            flex-direction: column;
+            height: calc(852px - 44px - 70px);
+        }
+
+        .chat-header {
+            padding: 20px;
+            background: linear-gradient(135deg, #42A5F5, #90CAF9);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .chat-header h2 {
+            flex: 1;
+            font-size: 18px;
+        }
+
+        .private-chat-header-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .private-chat-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid white;
+            flex-shrink: 0;
+        }
+
+        .private-chat-header-info h2 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .chat-messages {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+            background: #F5F5F5;
+        }
+
+        .message {
+            margin-bottom: 20px;
+            display: flex;
+            gap: 12px;
+        }
+
+        .message.own {
+            flex-direction: row-reverse;
+        }
+
+        .message-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        .message-content {
+            max-width: 70%;
+        }
+
+        .message.own .message-content {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+        }
+
+        .message-header {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 6px;
+        }
+
+        .message-name {
+            font-weight: 600;
+            font-size: 15px;
+            color: #333;
+        }
+
+        .message-time {
+            font-size: 13px;
+            color: #999;
+        }
+
+        .message-bubble {
+            background: white;
+            padding: 14px 16px;
+            border-radius: 18px;
+            font-size: 16px;
+            line-height: 1.5;
+            color: #333;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        .message.own .message-bubble {
+            background: #42A5F5;
+            color: white;
+        }
+
+        .chat-input-container {
+            padding: 15px 20px;
+            background: white;
+            border-top: 1px solid #E0E0E0;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 14px 16px;
+            border: 2px solid #E0E0E0;
+            border-radius: 25px;
+            font-size: 16px;
+            font-family: inherit;
+        }
+
+        .chat-input:focus {
+            outline: none;
+            border-color: #42A5F5;
+        }
+
+        .chat-send-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: #42A5F5;
+            color: white;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s;
+        }
+
+        .chat-send-btn:active {
+            transform: scale(0.95);
+        }
+
+        .chat-send-btn .material-icons {
+            font-size: 24px;
+        }
+
+        /* Activity List */
+        .activity-list {
+            padding: 0 20px 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .activity-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .activity-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .activity-card-image {
+            width: 100%;
+            height: 150px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+        }
+
+        .favorite-star {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .favorite-star.favorited {
+            background: rgba(255, 183, 77, 0.95);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .favorite-star.not-favorited {
+            background: rgba(0, 0, 0, 0.4);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .favorite-star:hover {
+            transform: scale(1.1);
+        }
+
+        .favorite-star.favorited:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+        }
+
+        .favorite-star.not-favorited:hover {
+            background: rgba(0, 0, 0, 0.6);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+
+        .favorite-star:active {
+            transform: scale(0.95);
+        }
+
+        .favorite-star .material-icons {
+            color: white;
+            font-size: 24px;
+        }
+
+        .activity-card-body {
+            padding: 15px;
+        }
+
+        .activity-card-body h3 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .activity-meta {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+            color: #666;
+            margin-bottom: 12px;
+        }
+
+        .activity-stats {
+            display: flex;
+            gap: 20px;
+            font-size: 15px;
+            color: #999;
+        }
+
+        .icon-friends {
+            color: #FFA726 !important;
+        }
+
+        .learn-more-btn {
+            width: 100%;
+            padding: 14px;
+            background: #42A5F5;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            margin-top: 12px;
+            font-size: 16px;
+        }
+
+        /* Activity Detail Screen */
+        .detail-hero {
+            height: 300px;
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        .detail-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.8));
+        }
+
+        .detail-hero-top,
+        .detail-hero-bottom {
+            position: relative;
+            z-index: 1;
+        }
+
+        .detail-hero-top {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .detail-hero h1 {
+            font-size: 32px;
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .organizer {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: white;
+        }
+
+        .organizer-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+        }
+
+        .organizer-info small {
+            display: block;
+            opacity: 0.8;
+            font-size: 12px;
+        }
+
+        .organizer-info strong {
+            font-size: 16px;
+            color: #42A5F5;
+        }
+
+        .detail-content {
+            padding: 20px;
+        }
+
+        .detail-section {
+            margin-bottom: 25px;
+        }
+
+        .detail-section h2 {
+            font-size: 18px;
+            color: #333;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .detail-section p {
+            color: #42A5F5;
+            line-height: 1.6;
+            font-size: 16px;
+        }
+
+        .time-info {
+            font-size: 18px;
+            color: #42A5F5;
+            font-weight: 600;
+        }
+
+        .participants-list,
+        .friends-list {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .participant-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-size: cover;
+            background-position: center;
+            border: 2px solid white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .action-button {
+            width: calc(100% - 40px);
+            margin: 20px 20px 100px;
+            padding: 20px;
+            border: none;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: transform 0.2s;
+        }
+
+        .action-button .material-icons {
+            font-size: 24px;
+        }
+
+        .action-button:active {
+            transform: scale(0.98);
+        }
+
+        .action-button.participate {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .action-button.leave {
+            background: #F44336;
+            color: white;
+        }
+
+        /* Profile Screen */
+        .profile-header {
+            background: linear-gradient(135deg, #42A5F5, #90CAF9);
+            padding: 40px 20px 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin: 0 auto 15px;
+            background-size: cover;
+            background-position: center;
+            border: 4px solid white;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+
+        .profile-header h2 {
+            font-size: 24px;
+            margin-bottom: 8px;
+        }
+
+        .verified-badge {
+            color: #4CAF50;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+
+        .profile-menu {
+            padding: 20px;
+        }
+
+        .menu-item {
+            background: rgba(66, 165, 245, 0.1);
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-size: 17px;
+            font-weight: 500;
+        }
+
+        .menu-item .material-icons {
+            font-size: 28px;
+        }
+
+        .menu-item:hover {
+            background: rgba(66, 165, 245, 0.2);
+        }
+
+        .preferences-section {
+            padding: 20px;
+        }
+
+        .preference-tag {
+            display: inline-block;
+            padding: 10px 15px;
+            background: #42A5F5;
+            color: white;
+            border-radius: 20px;
+            margin: 5px;
+            font-size: 14px;
+        }
+
+        .add-preference-btn {
+            padding: 12px 20px;
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+            margin-top: 10px;
+        }
+
+        /* Friends Screen */
+        .friends-section {
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .friends-section-title {
+            font-size: 19px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: #333;
+        }
+
+        .friend-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .friend-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            object-fit: cover;
+            cursor: pointer;
+        }
+
+        .friend-info {
+            flex: 1;
+        }
+
+        .friend-name {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        .friend-details {
+            font-size: 15px;
+            color: #666;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .friend-actions {
+            display: flex;
+            gap: 8px;
+            flex-direction: column;
+        }
+
+        .friend-action-btn {
+            padding: 10px 16px;
+            border: none;
+            border-radius: 8px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .friend-action-btn.green {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .friend-action-btn.red {
+            background: #F44336;
+            color: white;
+        }
+
+        .friend-action-btn.gray {
+            background: #9E9E9E;
+            color: white;
+        }
+
+        .friends-empty {
+            text-align: center;
+            color: #999;
+            font-size: 16px;
+            padding: 30px 20px;
+        }
+
+        /* Create Activity Wizard */
+        .wizard-steps {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            padding: 20px;
+        }
+
+        .wizard-step {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: white;
+        }
+
+        .wizard-step.active {
+            background: #42A5F5;
+        }
+
+        .wizard-step.completed {
+            background: #4CAF50;
+        }
+
+        .wizard-content {
+            padding: 20px;
+        }
+
+        .wizard-title {
+            display: block;
+            font-size: 24px;
+            font-weight: 700;
+            text-align: center;
+            margin: 0 0 30px 0;
+            padding: 0;
+            color: #333;
+            line-height: 1.4;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        .form-group input,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-note {
+            font-size: 12px;
+            color: #666;
+            margin-top: 15px;
+            padding: 10px;
+            background: #E3F2FD;
+            border-radius: 8px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+            padding: 16px;
+            background: white;
+            border: 2px solid #E0E0E0;
+            border-radius: 12px;
+            transition: all 0.2s ease;
+        }
+
+        .checkbox-label:hover {
+            border-color: #42A5F5;
+            background: #F8FBFF;
+        }
+
+        .checkbox-label input[type="checkbox"] {
+            width: 26px;
+            height: 26px;
+            cursor: pointer;
+            flex-shrink: 0;
+            accent-color: #42A5F5;
+        }
+
+        .checkbox-label .material-icons {
+            flex-shrink: 0;
+            position: relative;
+            top: -5px;
+        }
+
+        .checkbox-label > span:last-child {
+            font-size: 16px;
+            color: #333;
+            position: relative;
+            top: -5px;
+        }
+
+        .calendar {
+            padding: 8px 0 16px 0;
+            margin-bottom: 16px;
+            max-width: 100%;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding: 0;
+        }
+
+        .calendar-header strong {
+            font-size: 20px;
+            font-weight: 700;
+            color: #1a1a1a;
+            letter-spacing: -0.02em;
+        }
+
+        .calendar-nav {
+            background: #f5f5f5;
+            border: none;
+            cursor: pointer;
+            min-width: 44px;
+            min-height: 44px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        .calendar-nav:hover {
+            background: #e8e8e8;
+            transform: scale(1.05);
+        }
+
+        .calendar-nav:active {
+            background: #d8d8d8;
+            transform: scale(0.98);
+        }
+
+        .calendar-nav .material-icons {
+            font-size: 22px;
+            color: #333;
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 6px;
+            width: 100%;
+        }
+
+        .calendar-day {
+            aspect-ratio: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 500;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            -webkit-tap-highlight-color: transparent;
+            position: relative;
+            color: #1a1a1a;
+        }
+
+        .calendar-day.header {
+            font-weight: 700;
+            color: #666;
+            cursor: default;
+            font-size: 11px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            aspect-ratio: auto;
+            height: auto;
+            padding: 8px 0;
+        }
+
+        .calendar-day.selected {
+            background: #42A5F5;
+            color: white;
+            font-weight: 700;
+            box-shadow: 0 4px 12px rgba(66, 165, 245, 0.4);
+            transform: scale(1.02);
+        }
+
+        .calendar-day.today {
+            background: rgba(66, 165, 245, 0.1);
+            border: 2px solid #42A5F5;
+            font-weight: 700;
+            color: #42A5F5;
+        }
+
+        .calendar-day.past {
+            color: #BDBDBD;
+            cursor: not-allowed;
+            opacity: 0.5;
+        }
+
+        .calendar-day.empty {
+            cursor: default;
+        }
+
+        .calendar-day:not(.header):not(.past):not(.empty):hover {
+            background: #E3F2FD;
+            transform: scale(1.08);
+            box-shadow: 0 2px 8px rgba(66, 165, 245, 0.15);
+        }
+
+        .calendar-day:not(.header):not(.past):not(.empty):active {
+            transform: scale(1.02);
+            transition-duration: 0.1s;
+        }
+
+        .calendar-day.selected:hover {
+            background: #1E88E5;
+            transform: scale(1.08);
+            box-shadow: 0 6px 16px rgba(66, 165, 245, 0.5);
+        }
+
+        .calendar-day.selected:active {
+            transform: scale(1.02);
+        }
+
+        /* Acessibilidade - Estados de foco */
+        .calendar-nav:focus-visible {
+            outline: 3px solid #42A5F5;
+            outline-offset: 2px;
+        }
+
+        .calendar-day:focus-visible {
+            outline: 3px solid #42A5F5;
+            outline-offset: 2px;
+            z-index: 1;
+        }
+
+        /* Melhorias para telas pequenas */
+        @media (max-width: 380px) {
+            .calendar {
+                padding: 8px 0 12px 0;
+            }
+
+            .calendar-day {
+                font-size: 14px;
+                border-radius: 8px;
+            }
+
+            .calendar-header strong {
+                font-size: 18px;
+            }
+
+            .calendar-grid {
+                gap: 4px;
+            }
+        }
+
+        .time-selector {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .time-input {
+            flex: 1;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            text-align: center;
+        }
+
+        .wizard-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .wizard-btn {
+            flex: 1;
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .wizard-btn.next {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .wizard-btn.back {
+            background: #ddd;
+            color: #333;
+        }
+
+        .wizard-btn.cancel {
+            background: #F44336;
+            color: white;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.5);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .modal-overlay.active {
+            display: flex;
+        }
+
+        .modal {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            max-width: 320px;
+            text-align: center;
+            position: relative;
+        }
+
+        .modal-close {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #999;
+        }
+
+        .modal h3 {
+            font-size: 20px;
+            margin-bottom: 10px;
+            color: #333;
+        }
+
+        .modal p {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .modal-icon {
+            font-size: 60px;
+            margin-bottom: 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .modal-btn.confirm {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .modal-btn.cancel {
+            background: #F44336;
+            color: white;
+        }
+
+        .modal-btn.primary {
+            background: #42A5F5;
+            color: white;
+        }
+
+        /* User Profile Screen */
+        .user-profile-header {
+            background: linear-gradient(135deg, #42A5F5, #90CAF9);
+            padding: 30px 20px;
+            color: white;
+            text-align: center;
+        }
+
+        .user-profile-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            background-size: cover;
+            background-position: center;
+            border: 4px solid white;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
+        .user-profile-header h2 {
+            font-size: 26px;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .user-profile-info {
+            font-size: 17px;
+            margin: 8px 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            opacity: 0.95;
+        }
+
+        .verified-badge-card {
+            background: white;
+            margin: -20px 20px 20px 20px;
+            padding: 18px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            color: #4CAF50;
+            font-weight: 600;
+            font-size: 17px;
+        }
+
+        .verified-badge-card .material-icons {
+            color: #4CAF50;
+        }
+
+        .user-profile-content {
+            padding: 20px;
+        }
+
+        .user-profile-section {
+            margin-bottom: 30px;
+        }
+
+        .user-profile-section h3 {
+            font-size: 19px;
+            color: #333;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 600;
+        }
+
+        .user-profile-section p {
+            color: #666;
+            line-height: 1.8;
+            font-size: 17px;
+        }
+
+        .user-profile-preferences {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .user-profile-preference-tag {
+            display: inline-block;
+            padding: 12px 18px;
+            background: #E3F2FD;
+            color: #42A5F5;
+            border-radius: 25px;
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        .user-profile-common-activities {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .user-profile-activity-card {
+            background: white;
+            border-radius: 12px;
+            padding: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .user-profile-activity-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .user-profile-activity-image {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            background-size: cover;
+            background-position: center;
+            flex-shrink: 0;
+        }
+
+        .user-profile-activity-info {
+            flex: 1;
+        }
+
+        .user-profile-activity-info h4 {
+            font-size: 17px;
+            color: #333;
+            margin-bottom: 5px;
+            font-weight: 600;
+        }
+
+        .user-profile-activity-info p {
+            font-size: 15px;
+            color: #999;
+            margin: 0;
+        }
+
+        .user-profile-actions {
+            padding: 0 20px;
+        }
+
+        .user-profile-actions .action-button {
+            margin-bottom: 15px;
+        }
+
+        .user-profile-actions .action-button:disabled {
+            cursor: not-allowed;
+            opacity: 0.7;
+        }
+
+        /* Edit Profile */
+        .edit-form {
+            padding: 20px;
+        }
+
+        .edit-form textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            font-size: 16px;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .edit-form textarea:focus {
+            outline: none;
+            border-color: #42A5F5;
+        }
+
+        .preferences-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+            margin-top: 10px;
+        }
+
+        .preference-checkbox {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 12px;
+            border: 2px solid #E0E0E0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .preference-checkbox:hover {
+            border-color: #42A5F5;
+            background: #F5F9FF;
+        }
+
+        .preference-checkbox input[type="checkbox"] {
+            width: 22px;
+            height: 22px;
+            cursor: pointer;
+            accent-color: #42A5F5;
+        }
+
+        .preference-checkbox span {
+            font-size: 16px;
+            color: #333;
+            font-weight: 500;
+            line-height: 1;
+        }
+
+        .preference-checkbox input[type="checkbox"]:checked + span {
+            color: #42A5F5;
+            font-weight: 600;
+        }
+
+        /* Success Message */
+        .success-message {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .success-message .modal-icon {
+            color: #4CAF50;
+        }
+
+        .success-message h3 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        /* Utility */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Scrollbar styling */
+        .screen::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .screen::-webkit-scrollbar-thumb {
+            background: #ddd;
+            border-radius: 3px;
+        }
+    </style>
+</head>
+<body>
+    <div class="phone-container">
+        <!-- Status Bar -->
+        <div class="status-bar">
+            <span>9:41</span>
+            <div class="status-icons">
+                <span class="material-icons md-18">signal_cellular_alt</span>
+                <span class="material-icons md-18">wifi</span>
+                <span class="material-icons md-18">battery_full</span>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="home-screen" class="screen active">
+            <h2 class="section-title" style="margin-top: 20px;">Suas Próximas Atividades</h2>
+            <div class="horizontal-scroll" id="upcoming-activities"></div>
+
+            <div class="search-section">
+                <h2 class="section-title" style="margin: 0 0 15px 0;">Atividades Disponíveis</h2>
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Buscar atividades..." id="search-input">
+                    <button class="filter-btn" id="filter-btn"><span class="material-icons">search</span></button>
+                </div>
+
+                <select class="filter-select" id="category-filter" onchange="filterByCategory(this.value)">
+                    <option value="todas">Todas as Categorias</option>
+                    <option value="Dança">Dança</option>
+                    <option value="Yoga">Yoga</option>
+                    <option value="Jogos">Jogos</option>
+                    <option value="Leitura">Leitura</option>
+                    <option value="Esportes">Esportes</option>
+                    <option value="Artesanato">Artesanato</option>
+                    <option value="Ar Livre">Ar Livre</option>
+                    <option value="Música">Música</option>
+                </select>
+
+                <div class="filter-checkbox-container" id="friends-filter-container" onclick="toggleFriendsFilter()">
+                    <input type="checkbox" class="filter-checkbox" id="friends-filter" onclick="event.stopPropagation(); toggleFriendsFilter()">
+                    <label class="filter-checkbox-label" for="friends-filter">
+                        <span class="material-icons md-20 icon-friends">sentiment_very_satisfied</span>
+                        Apenas atividades com amigos
+                    </label>
+                </div>
+            </div>
+
+            <div class="activity-list" id="activity-list"></div>
+        </div>
+
+        <!-- Activity Detail Screen -->
+        <div id="detail-screen" class="screen">
+            <div class="detail-hero" id="detail-hero">
+                <div class="detail-hero-top">
+                    <button class="icon-btn" onclick="navigateTo('home')"><span class="material-icons">arrow_back</span></button>
+                    <div>
+                        <button class="icon-btn" id="share-btn"><span class="material-icons">share</span></button>
+                        <button class="icon-btn" id="favorite-btn"><span class="material-icons">star_outline</span></button>
+                    </div>
+                </div>
+                <div class="detail-hero-bottom">
+                    <h1 id="detail-title"></h1>
+                    <div class="organizer" id="detail-organizer" style="cursor: pointer;">
+                        <div class="organizer-avatar" id="detail-organizer-avatar"></div>
+                        <div class="organizer-info">
+                            <small>Organizador</small>
+                            <strong id="detail-organizer-name"></strong>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="detail-content">
+                <div class="detail-section">
+                    <h2><span class="material-icons md-20">description</span> Sobre</h2>
+                    <p id="detail-description"></p>
+                </div>
+
+                <div class="detail-section">
+                    <h2><span class="material-icons md-20">schedule</span> Data e Hora</h2>
+                    <p class="time-info" id="detail-time"></p>
+                </div>
+
+                <div class="detail-section">
+                    <h2><span class="material-icons md-20">people</span> Participantes</h2>
+                    <div class="participants-list" id="detail-participants"></div>
+                </div>
+
+                <div class="detail-section">
+                    <h2><span class="material-icons md-20 icon-friends">sentiment_very_satisfied</span> Amigos</h2>
+                    <div class="friends-list" id="detail-friends"></div>
+                </div>
+            </div>
+
+            <button class="chat-button hidden" id="chat-btn" onclick="openChat()">
+                <span class="material-icons">chat</span>
+                Conversar com participantes
+            </button>
+            <button class="action-button participate" id="action-btn" onclick="handleParticipation()"></button>
+        </div>
+
+        <!-- Chat Screen -->
+        <div id="chat-screen" class="screen">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <button class="icon-btn" onclick="navigateTo('detail-screen')" style="background: rgba(255,255,255,0.2);"><span class="material-icons">arrow_back</span></button>
+                    <h2 id="chat-activity-title">Conversa da Atividade</h2>
+                </div>
+
+                <div class="chat-messages" id="chat-messages"></div>
+
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="chat-input" placeholder="Digite sua mensagem...">
+                    <button class="chat-send-btn" onclick="sendMessage()"><span class="material-icons">send</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div id="profile-screen" class="screen">
+            <div class="header">
+                <div></div>
+                <h1>Meu Perfil</h1>
+                <div></div>
+            </div>
+
+            <div class="user-profile-header">
+                <div class="user-profile-avatar" id="own-profile-avatar"></div>
+                <h2 id="own-profile-name"></h2>
+                <p class="user-profile-info"><span class="material-icons md-18">cake</span> <span id="own-profile-age"></span> anos</p>
+                <p class="user-profile-info"><span class="material-icons md-18">location_on</span> <span id="own-profile-city"></span></p>
+            </div>
+
+            <div class="verified-badge-card" id="own-profile-verified">
+                <span class="material-icons md-20">check_circle</span>
+                <span>Usuário verificado!</span>
+            </div>
+
+            <div class="user-profile-content">
+                <div class="user-profile-section">
+                    <h3><span class="material-icons md-20">person</span> Sobre</h3>
+                    <p id="own-profile-bio"></p>
+                </div>
+
+                <div class="user-profile-section">
+                    <h3><span class="material-icons md-20">favorite</span> Interesses</h3>
+                    <div id="own-profile-preferences"></div>
+                </div>
+
+                <div class="user-profile-section">
+                    <h3><span class="material-icons md-20">event</span> Minhas Atividades</h3>
+                    <div id="own-profile-activities"></div>
+                </div>
+            </div>
+
+            <div class="user-profile-actions">
+                <button class="action-button" onclick="navigateTo('friends-screen')" style="background: #FF9800;">
+                    <span class="material-icons">people</span>
+                    <span>Meus Amigos</span>
+                </button>
+                <button class="action-button" onclick="navigateTo('favorites')" style="background: #42A5F5;">
+                    <span class="material-icons">star</span>
+                    <span>Atividades Favoritas</span>
+                </button>
+                <button class="action-button" onclick="navigateTo('edit-profile')" style="background: #4CAF50; margin-bottom: 100px;">
+                    <span class="material-icons">edit</span>
+                    <span>Editar Perfil</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Edit Profile Screen -->
+        <div id="edit-profile" class="screen">
+            <div class="header">
+                <button class="icon-btn" onclick="navigateTo('profile')"><span class="material-icons">arrow_back</span></button>
+                <h1>Editar Perfil</h1>
+                <div></div>
+            </div>
+
+            <div class="edit-form">
+                <div class="user-profile-avatar" id="edit-profile-avatar" style="margin: 20px auto;"></div>
+
+                <div class="form-group">
+                    <label>Nome de usuário</label>
+                    <input type="text" id="edit-name">
+                </div>
+
+                <div class="form-group">
+                    <label>Data de nascimento</label>
+                    <input type="date" id="edit-birthdate">
+                </div>
+
+                <div class="form-group">
+                    <label>Cidade</label>
+                    <input type="text" id="edit-city">
+                </div>
+
+                <div class="form-group">
+                    <label>Sobre você</label>
+                    <textarea id="edit-bio" rows="4" placeholder="Conte um pouco sobre você..."></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Interesses (selecione todos que se aplicam)</label>
+                    <div class="preferences-grid">
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Yoga">
+                            <span>Yoga</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Dança">
+                            <span>Dança</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Leitura">
+                            <span>Leitura</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Ar Livre">
+                            <span>Ar Livre</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Alongamentos">
+                            <span>Alongamentos</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Música">
+                            <span>Música</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Arte">
+                            <span>Arte</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Jogos">
+                            <span>Jogos</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Artesanato">
+                            <span>Artesanato</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Caminhada">
+                            <span>Caminhada</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Esportes">
+                            <span>Esportes</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Teatro">
+                            <span>Teatro</span>
+                        </label>
+                        <label class="preference-checkbox">
+                            <input type="checkbox" value="Meditação">
+                            <span>Meditação</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="wizard-buttons">
+                    <button class="wizard-btn cancel" onclick="navigateTo('profile')">Cancelar</button>
+                    <button class="wizard-btn next" onclick="saveProfile()">Salvar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Preferences Screen -->
+        <div id="preferences" class="screen">
+            <div class="header">
+                <button class="icon-btn" onclick="navigateTo('profile')"><span class="material-icons">arrow_back</span></button>
+                <h1>Preferências de Eventos</h1>
+                <div></div>
+            </div>
+
+            <div class="preferences-section">
+                <h2 class="section-title">Suas preferências</h2>
+                <div id="preferences-list">
+                    <span class="preference-tag">Yoga</span>
+                    <span class="preference-tag">Ar Livre</span>
+                    <span class="preference-tag">Alongamentos</span>
+                </div>
+                <button class="add-preference-btn" onclick="addPreference()"><span class="material-icons md-18">add</span> Adicionar Preferência</button>
+            </div>
+        </div>
+
+        <!-- Friends Screen -->
+        <div id="friends-screen" class="screen">
+            <div class="header">
+                <button class="icon-btn" onclick="navigateTo('profile')"><span class="material-icons">arrow_back</span></button>
+                <h1>Meus Amigos</h1>
+                <div></div>
+            </div>
+
+            <div class="friends-section">
+                <h2 class="friends-section-title">Amigos (<span id="friends-count">0</span>)</h2>
+                <div id="friends-list"></div>
+            </div>
+
+            <div class="friends-section">
+                <h2 class="friends-section-title">Solicitações Recebidas (<span id="received-count">0</span>)</h2>
+                <div id="received-requests-list"></div>
+            </div>
+
+            <div class="friends-section">
+                <h2 class="friends-section-title">Solicitações Enviadas (<span id="sent-count">0</span>)</h2>
+                <div id="sent-requests-list"></div>
+            </div>
+        </div>
+
+        <!-- Favorites Screen -->
+        <div id="favorites" class="screen">
+            <div class="header">
+                <button class="icon-btn" onclick="navigateTo('profile')"><span class="material-icons">arrow_back</span></button>
+                <h1>Atividades Favoritas</h1>
+                <div></div>
+            </div>
+
+            <div class="activity-list" id="favorites-list" style="padding-top: 20px;"></div>
+        </div>
+
+        <!-- Create Activity - Step 1 -->
+        <div id="create-activity-1" class="screen">
+            <div class="header">
+                <button class="icon-btn" onclick="navigateTo('home')"><span class="material-icons">close</span></button>
+                <h1>Criar Atividade</h1>
+                <div></div>
+            </div>
+
+            <div class="wizard-steps">
+                <div class="wizard-step active">1</div>
+                <div class="wizard-step">2</div>
+                <div class="wizard-step">3</div>
+            </div>
+
+            <div class="wizard-content">
+                <h2 class="wizard-title">Criar<br>Atividade</h2>
+
+                <div class="form-group">
+                    <label>Título da Atividade</label>
+                    <input type="text" id="create-title" placeholder="Nome da atividade">
+                </div>
+
+                <div class="form-group">
+                    <label>Descrição da Atividade</label>
+                    <textarea id="create-description" placeholder="Digite a descrição da atividade"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label>Opções do Evento</label>
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="create-verified-only" checked>
+                            <span class="material-icons md-20" style="color: #42A5F5;">info</span>
+                            <span>Apenas usuários verificados</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="create-friends-only">
+                            <span class="material-icons md-20" style="color: #42A5F5;">lock</span>
+                            <span>Grupo privado (apenas amigos)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="wizard-buttons">
+                    <button class="wizard-btn next" onclick="nextStep(1)">Próxima</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Activity - Step 2 -->
+        <div id="create-activity-2" class="screen">
+            <div class="header">
+                <button class="icon-btn" onclick="navigateTo('home')"><span class="material-icons">close</span></button>
+                <h1>Criar Atividade</h1>
+                <div></div>
+            </div>
+
+            <div class="wizard-steps">
+                <div class="wizard-step completed">✓</div>
+                <div class="wizard-step active">2</div>
+                <div class="wizard-step">3</div>
+            </div>
+
+            <div class="wizard-content">
+                <h2 class="wizard-title">Escolher<br>Data e Hora</h2>
+
+                <div class="calendar">
+                    <div class="calendar-header">
+                        <button class="calendar-nav" onclick="changeMonth(-1)"><span class="material-icons">arrow_back</span></button>
+                        <strong id="calendar-month">Junho 2025</strong>
+                        <button class="calendar-nav" onclick="changeMonth(1)"><span class="material-icons">arrow_forward</span></button>
+                    </div>
+                    <div class="calendar-grid" id="calendar-grid"></div>
+                </div>
+
+                <div class="form-group">
+                    <label>Horário</label>
+                    <div class="time-selector">
+                        <input type="time" class="time-input" id="create-time-start" value="16:00">
+                        <input type="time" class="time-input" id="create-time-end" value="18:30">
+                    </div>
+                </div>
+
+                <div class="wizard-buttons">
+                    <button class="wizard-btn back" onclick="navigateTo('create-activity-1')">Voltar</button>
+                    <button class="wizard-btn next" onclick="nextStep(2)">Próxima</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Create Activity - Step 3 -->
+        <div id="create-activity-3" class="screen">
+            <div class="header">
+                <button class="icon-btn" onclick="navigateTo('home')"><span class="material-icons">close</span></button>
+                <h1>Criar Atividade</h1>
+                <div></div>
+            </div>
+
+            <div class="wizard-steps">
+                <div class="wizard-step completed">✓</div>
+                <div class="wizard-step completed">✓</div>
+                <div class="wizard-step active">3</div>
+            </div>
+
+            <div class="wizard-content">
+                <h2 class="wizard-title">Definir<br>Local</h2>
+
+                <div class="form-group">
+                    <label>CEP</label>
+                    <input type="text" id="create-cep" placeholder="00000-000">
+                </div>
+
+                <div class="form-group">
+                    <label>Número</label>
+                    <input type="text" id="create-number" placeholder="000">
+                </div>
+
+                <div class="form-group">
+                    <label>Ponto de referência</label>
+                    <input type="text" id="create-reference" placeholder="Ponto de referência">
+                </div>
+
+                <div class="wizard-buttons">
+                    <button class="wizard-btn back" onclick="navigateTo('create-activity-2')">Voltar</button>
+                    <button class="wizard-btn next" onclick="createActivity()">Finalizar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Private Chat Screen -->
+        <div id="private-chat-screen" class="screen">
+            <div class="chat-container">
+                <div class="chat-header">
+                    <button class="icon-btn" onclick="goBackFromPrivateChat()" style="background: rgba(255,255,255,0.2);"><span class="material-icons">arrow_back</span></button>
+                    <div class="private-chat-header-info">
+                        <div class="private-chat-avatar" id="private-chat-avatar"></div>
+                        <h2 id="private-chat-username">Conversa Privada</h2>
+                    </div>
+                </div>
+
+                <div class="chat-messages" id="private-chat-messages"></div>
+
+                <div class="chat-input-container">
+                    <input type="text" class="chat-input" id="private-chat-input" placeholder="Digite sua mensagem...">
+                    <button class="chat-send-btn" onclick="sendPrivateMessageInChat()"><span class="material-icons">send</span></button>
+                </div>
+            </div>
+        </div>
+
+        <!-- User Profile Screen -->
+        <div id="user-profile-screen" class="screen">
+            <div class="header">
+                <button class="icon-btn" id="user-profile-back-btn" onclick="goBackFromUserProfile()"><span class="material-icons">arrow_back</span></button>
+                <h1>Perfil</h1>
+                <div></div>
+            </div>
+
+            <div class="user-profile-header">
+                <div class="user-profile-avatar" id="user-profile-avatar"></div>
+                <h2 id="user-profile-name"></h2>
+                <p class="user-profile-info"><span class="material-icons md-18">cake</span> <span id="user-profile-age"></span> anos</p>
+                <p class="user-profile-info"><span class="material-icons md-18">location_on</span> <span id="user-profile-city"></span></p>
+            </div>
+
+            <div class="verified-badge-card" id="user-profile-verified">
+                <span class="material-icons md-20">check_circle</span>
+                <span>Usuário verificado!</span>
+            </div>
+
+            <div class="user-profile-content">
+                <div class="user-profile-section">
+                    <h3><span class="material-icons md-20">person</span> Sobre</h3>
+                    <p id="user-profile-bio"></p>
+                </div>
+
+                <div class="user-profile-section">
+                    <h3><span class="material-icons md-20">favorite</span> Interesses</h3>
+                    <div id="user-profile-preferences"></div>
+                </div>
+
+                <div class="user-profile-section">
+                    <h3><span class="material-icons md-20">event</span> Atividades em Comum</h3>
+                    <div id="user-profile-common-activities"></div>
+                </div>
+            </div>
+
+            <div class="user-profile-actions">
+                <button class="action-button" id="friend-action-btn" onclick="toggleFriend()">
+                    <span class="material-icons">person_add</span>
+                    <span id="friend-action-text">Adicionar Amigo</span>
+                </button>
+                <button class="action-button" id="message-action-btn" onclick="sendPrivateMessage()" style="background: #42A5F5; margin-bottom: 100px;">
+                    <span class="material-icons">chat</span>
+                    Enviar Mensagem
+                </button>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <div class="bottom-nav">
+            <button class="nav-btn active" onclick="navigateTo('home')"><span class="material-icons">home</span></button>
+            <button class="nav-btn" onclick="navigateTo('create-activity-1')"><span class="material-icons">add</span></button>
+            <button class="nav-btn" onclick="navigateTo('profile')"><span class="material-icons">person</span></button>
+        </div>
+
+        <!-- Modal -->
+        <div class="modal-overlay" id="modal-overlay">
+            <div class="modal">
+                <button class="modal-close" onclick="closeModal()"><span class="material-icons">close</span></button>
+                <div class="modal-icon" id="modal-icon"></div>
+                <h3 id="modal-title"></h3>
+                <p id="modal-message"></p>
+                <div class="modal-buttons" id="modal-buttons"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Global State
+        const state = {
+            currentUser: {
+                id: 1,
+                name: 'Anna Lucia',
+                avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop&crop=faces',
+                verified: true,
+                birthdate: '1960-05-15',
+                age: 65,
+                city: 'Rio de Janeiro',
+                bio: 'Adoro fazer yoga e conhecer pessoas novas! Sempre em busca de atividades ao ar livre e momentos de bem-estar.',
+                preferences: ['Yoga', 'Ar Livre', 'Alongamentos'],
+                friends: [7, 8, 9, 10], // IDs de amigos confirmados
+                sentFriendRequests: [], // IDs de solicitações enviadas pendentes
+                receivedFriendRequests: [3, 5] // IDs de solicitações recebidas (mockadas)
+            },
+            users: {
+                1: {
+                    id: 1,
+                    name: 'Anna Lucia',
+                    avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 65,
+                    city: 'Rio de Janeiro',
+                    bio: 'Adoro fazer yoga e conhecer pessoas novas! Sempre em busca de atividades ao ar livre e momentos de bem-estar.',
+                    preferences: ['Yoga', 'Ar Livre', 'Alongamentos'],
+                    activities: [2]
+                },
+                2: {
+                    id: 2,
+                    name: 'Maria Chagas',
+                    avatar: 'https://images.unsplash.com/photo-1609220136736-443140cffec6?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 68,
+                    city: 'Rio de Janeiro',
+                    bio: 'Professora de dança aposentada. Amo ensinar e compartilhar a alegria do tango!',
+                    preferences: ['Dança', 'Música', 'Arte'],
+                    activities: [1]
+                },
+                3: {
+                    id: 3,
+                    name: 'João Silva',
+                    avatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 62,
+                    city: 'Niterói',
+                    bio: 'Recém aposentado buscando novas experiências. Adoro dançar e fazer novos amigos!',
+                    preferences: ['Dança', 'Jogos', 'Socialização'],
+                    activities: [1, 2]
+                },
+                4: {
+                    id: 4,
+                    name: 'Pedro Costa',
+                    avatar: 'https://images.unsplash.com/photo-1595397306574-ddc88e5ec85e?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 70,
+                    city: 'Rio de Janeiro',
+                    bio: 'Sempre ativo! Busco atividades que me mantenham em movimento e conectado com pessoas.',
+                    preferences: ['Dança', 'Esportes', 'Caminhada'],
+                    activities: [1, 3]
+                },
+                5: {
+                    id: 5,
+                    name: 'Rosa Mendes',
+                    avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 64,
+                    city: 'São Gonçalo',
+                    bio: 'Amo ler e dançar! A vida é para ser vivida com alegria e cultura.',
+                    preferences: ['Leitura', 'Dança', 'Teatro'],
+                    activities: [1, 2]
+                },
+                6: {
+                    id: 6,
+                    name: 'Carlos Oliveira',
+                    avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 69,
+                    city: 'Duque de Caxias',
+                    bio: 'Aposentado em busca de atividades culturais. Adoro conhecer pessoas interessantes!',
+                    preferences: ['Dança', 'Arte', 'Música'],
+                    activities: [1]
+                },
+                7: {
+                    id: 7,
+                    name: 'Mariana Santos',
+                    avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 63,
+                    city: 'Rio de Janeiro',
+                    bio: 'Amiga da Anna! Amo atividades em grupo e fazer novas amizades.',
+                    preferences: ['Yoga', 'Leitura', 'Artesanato'],
+                    activities: [2, 5]
+                },
+                8: {
+                    id: 8,
+                    name: 'Fernando Souza',
+                    avatar: 'https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 66,
+                    city: 'Niterói',
+                    bio: 'Adoro livros e conversas interessantes. Sempre disposto a aprender coisas novas!',
+                    preferences: ['Leitura', 'Jogos', 'História'],
+                    activities: [2, 3]
+                },
+                9: {
+                    id: 9,
+                    name: 'Lucia Ferreira',
+                    avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 61,
+                    city: 'Rio de Janeiro',
+                    bio: 'Professora aposentada. Amo ler e compartilhar conhecimento com outras pessoas.',
+                    preferences: ['Leitura', 'Ensino', 'Arte'],
+                    activities: [2]
+                },
+                10: {
+                    id: 10,
+                    name: 'Roberto Lima',
+                    avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 67,
+                    city: 'São João de Meriti',
+                    bio: 'Leitor ávido e amante de discussões literárias. Acredito no poder dos livros!',
+                    preferences: ['Leitura', 'Filosofia', 'Escrita'],
+                    activities: [2]
+                },
+                11: {
+                    id: 11,
+                    name: 'Neide José',
+                    avatar: 'https://images.unsplash.com/photo-1590650153855-d9e808231d41?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 71,
+                    city: 'Rio de Janeiro',
+                    bio: 'Fundadora do Clube do Livro! Apaixonada por literatura e por conectar pessoas através da leitura.',
+                    preferences: ['Leitura', 'Literatura', 'Socialização'],
+                    activities: [2]
+                },
+                12: {
+                    id: 12,
+                    name: 'Carlos Silva',
+                    avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 73,
+                    city: 'Rio de Janeiro',
+                    bio: 'Mestre de xadrez aposentado. Adoro ensinar e jogar partidas amistosas!',
+                    preferences: ['Xadrez', 'Jogos', 'Estratégia'],
+                    activities: [3]
+                },
+                13: {
+                    id: 13,
+                    name: 'Paulo Henrique',
+                    avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 65,
+                    city: 'Niterói',
+                    bio: 'Jogador de xadrez amador. Sempre buscando melhorar minhas habilidades!',
+                    preferences: ['Xadrez', 'Lógica', 'Matemática'],
+                    activities: [3]
+                },
+                14: {
+                    id: 14,
+                    name: 'Antônio Alves',
+                    avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 68,
+                    city: 'São Gonçalo',
+                    bio: 'Engenheiro aposentado. Xadrez é minha paixão desde criança!',
+                    preferences: ['Xadrez', 'Engenharia', 'Ciências'],
+                    activities: [3]
+                },
+                15: {
+                    id: 15,
+                    name: 'José Carlos',
+                    avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 70,
+                    city: 'Rio de Janeiro',
+                    bio: 'Amigo do Carlos Silva. Adoro xadrez e jogos de estratégia!',
+                    preferences: ['Xadrez', 'Jogos', 'Competição'],
+                    activities: [3]
+                },
+                16: {
+                    id: 16,
+                    name: 'Patricia Costa',
+                    avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 58,
+                    city: 'Rio de Janeiro',
+                    bio: 'Instrutora de yoga certificada. Minha missão é levar paz e bem-estar para todos!',
+                    preferences: ['Yoga', 'Meditação', 'Natureza'],
+                    activities: [4]
+                },
+                17: {
+                    id: 17,
+                    name: 'Sandra Reis',
+                    avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 60,
+                    city: 'Niterói',
+                    bio: 'Praticante de yoga há 10 anos. Adoro a energia do nascer do sol na praia!',
+                    preferences: ['Yoga', 'Praia', 'Bem-estar'],
+                    activities: [4]
+                },
+                18: {
+                    id: 18,
+                    name: 'Helena Martins',
+                    avatar: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 66,
+                    city: 'Rio de Janeiro',
+                    bio: 'Artesã com 30 anos de experiência. Amo ensinar e ver a criatividade das pessoas!',
+                    preferences: ['Artesanato', 'Arte', 'Ensino'],
+                    activities: [5]
+                },
+                19: {
+                    id: 19,
+                    name: 'Beatriz Almeida',
+                    avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 64,
+                    city: 'São João de Meriti',
+                    bio: 'Adoro trabalhos manuais! Artesanato é minha forma de relaxar.',
+                    preferences: ['Artesanato', 'Crochê', 'Pintura'],
+                    activities: [5]
+                },
+                20: {
+                    id: 20,
+                    name: 'Vera Santos',
+                    avatar: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 67,
+                    city: 'Duque de Caxias',
+                    bio: 'Sempre fui criativa. O artesanato me ajuda a expressar minha arte!',
+                    preferences: ['Artesanato', 'Decoração', 'DIY'],
+                    activities: [5]
+                },
+                21: {
+                    id: 21,
+                    name: 'Silvia Ribeiro',
+                    avatar: 'https://images.unsplash.com/photo-1479936343636-73cdc5aae0c3?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 63,
+                    city: 'Rio de Janeiro',
+                    bio: 'Amiga da Helena! Adoro artesanato e criar coisas bonitas com as mãos.',
+                    preferences: ['Artesanato', 'Costura', 'Arte'],
+                    activities: [5]
+                },
+                22: {
+                    id: 22,
+                    name: 'Roberto Lima',
+                    avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 69,
+                    city: 'Niterói',
+                    bio: 'Ex-tenista profissional. Hoje ensino e jogo por diversão!',
+                    preferences: ['Tênis', 'Esportes', 'Competição'],
+                    activities: [6]
+                },
+                23: {
+                    id: 23,
+                    name: 'Miguel Cardoso',
+                    avatar: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 66,
+                    city: 'Rio de Janeiro',
+                    bio: 'Jogador amador de tênis. Adoro me manter ativo e saudável!',
+                    preferences: ['Tênis', 'Saúde', 'Atividade Física'],
+                    activities: [6]
+                },
+                24: {
+                    id: 24,
+                    name: 'Marcos Souza',
+                    avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 64,
+                    city: 'Rio de Janeiro',
+                    bio: 'Guia de trilhas. Meu objetivo é compartilhar a beleza da natureza com todos!',
+                    preferences: ['Caminhada', 'Natureza', 'Ecologia'],
+                    activities: [7]
+                },
+                25: {
+                    id: 25,
+                    name: 'Silvia Rodrigues',
+                    avatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=200&h=200&fit=crop&crop=faces',
+                    verified: true,
+                    age: 72,
+                    city: 'Rio de Janeiro',
+                    bio: 'Regente do coral. A música me completa e adoro cantar em grupo!',
+                    preferences: ['Música', 'Canto', 'Coral'],
+                    activities: [8]
+                }
+            },
+            activities: [
+                {
+                    id: 1,
+                    title: 'Aula de dança - Tango',
+                    description: 'Encontro semanal para amantes da dança, resgatando as origens de uma das danças mais envolventes e populares da américa latina.',
+                    organizer: { id: 2, name: 'Maria Chagas', avatar: 'https://images.unsplash.com/photo-1609220136736-443140cffec6?w=200&h=200&fit=crop&crop=faces' },
+                    schedule: 'Segunda & Quarta 20:00 - 21:20',
+                    participants: [
+                        { id: 3, avatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 4, avatar: 'https://images.unsplash.com/photo-1595397306574-ddc88e5ec85e?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 5, avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 6, avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=faces' }
+                    ],
+                    friends: [
+                        { id: 7, avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 8, avatar: 'https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 9, avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 10, avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces' }
+                    ],
+                    image: 'https://images.unsplash.com/photo-1504609813442-a8924e83f76e?w=800&q=80',
+                    category: 'Dança'
+                },
+                {
+                    id: 2,
+                    title: 'Clube do Livro da Neide',
+                    description: 'Encontro semanal para amantes da leitura, possibilitando um ambiente para discussões, compartilhamento de experiências e indicações de novos títulos.',
+                    organizer: { id: 11, name: 'Neide José', avatar: 'https://images.unsplash.com/photo-1590650153855-d9e808231d41?w=200&h=200&fit=crop&crop=faces' },
+                    schedule: 'Quinta 14:00 - 16:00',
+                    participants: [
+                        { id: 3, avatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 4, avatar: 'https://images.unsplash.com/photo-1595397306574-ddc88e5ec85e?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 5, avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 6, avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=200&h=200&fit=crop&crop=faces' }
+                    ],
+                    friends: [
+                        { id: 7, avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 8, avatar: 'https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 9, avatar: 'https://images.unsplash.com/photo-1531746020798-e6953c6e8e04?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 10, avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&h=200&fit=crop&crop=faces' }
+                    ],
+                    image: 'https://images.unsplash.com/photo-1524995997946-a1c2e315a42f?w=800&q=80',
+                    category: 'Leitura'
+                },
+                {
+                    id: 3,
+                    title: 'Encontro de Xadrez Semanal',
+                    description: 'Grupo de entusiastas do xadrez se reúnem semanalmente para partidas amistosas e aprendizado.',
+                    organizer: { id: 12, name: 'Carlos Silva', avatar: 'https://images.unsplash.com/photo-1560250097-0b93528c311a?w=200&h=200&fit=crop&crop=faces' },
+                    schedule: 'Sexta-Feira 17:00 - 19:00',
+                    participants: [
+                        { id: 13, avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 14, avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=200&h=200&fit=crop&crop=faces' }
+                    ],
+                    friends: [
+                        { id: 15, avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=200&h=200&fit=crop&crop=faces' }
+                    ],
+                    image: 'https://images.unsplash.com/photo-1560174038-da43ac74f01b?w=800&q=80',
+                    category: 'Jogos'
+                },
+                {
+                    id: 4,
+                    title: 'Yoga na Praia',
+                    description: 'Sessão de yoga ao ar livre na praia, aproveitando o nascer do sol.',
+                    organizer: { id: 16, name: 'Patricia Costa', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=200&h=200&fit=crop&crop=faces' },
+                    schedule: 'Sábado 9:00 - 10:00',
+                    participants: [
+                        { id: 17, avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&h=200&fit=crop&crop=faces' }
+                    ],
+                    friends: [],
+                    image: 'https://images.unsplash.com/photo-1588286840104-8957b019727f?w=800&q=80',
+                    category: 'Yoga'
+                },
+                {
+                    id: 5,
+                    title: 'Oficina de Artesanato',
+                    description: 'Aprenda técnicas de artesanato e crie peças únicas.',
+                    organizer: { id: 18, name: 'Helena Martins', avatar: 'https://images.unsplash.com/photo-1489424731084-a5d8b219a5bb?w=200&h=200&fit=crop&crop=faces' },
+                    schedule: 'Terça & Quinta 14:00 - 16:00',
+                    participants: [
+                        { id: 19, avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&h=200&fit=crop&crop=faces' },
+                        { id: 20, avatar: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=200&h=200&fit=crop&crop=faces' }
+                    ],
+                    friends: [
+                        { id: 21, avatar: 'https://images.unsplash.com/photo-1479936343636-73cdc5aae0c3?w=200&h=200&fit=crop&crop=faces' }
+                    ],
+                    image: 'https://images.unsplash.com/photo-1452860606245-08befc0ff44b?w=800&q=80',
+                    category: 'Artesanato'
+                },
+                {
+                    id: 6,
+                    title: 'Tênis',
+                    description: 'Partidas amistosas de tênis para todas as idades e níveis.',
+                    organizer: { id: 22, name: 'Roberto Lima', avatar: 'https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?w=200&h=200&fit=crop&crop=faces' },
+                    schedule: 'Terça & Quinta 9:00 - 11:00',
+                    participants: [
+                        { id: 23, avatar: 'https://images.unsplash.com/photo-1463453091185-61582044d556?w=200&h=200&fit=crop&crop=faces' }
+                    ],
+                    friends: [],
+                    image: 'https://images.unsplash.com/photo-1554068865-24cecd4e34b8?w=800&q=80',
+                    category: 'Esportes'
+                },
+                {
+                    id: 7,
+                    title: 'Caminhada Ecológica',
+                    description: 'Caminhada leve em trilhas naturais, apreciando a natureza.',
+                    organizer: { id: 24, name: 'Marcos Souza', avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=200&h=200&fit=crop&crop=faces' },
+                    schedule: 'Domingo 7:00 - 9:00',
+                    participants: [],
+                    friends: [],
+                    image: 'https://images.unsplash.com/photo-1551632811-561732d1e306?w=800&q=80',
+                    category: 'Ar Livre'
+                },
+                {
+                    id: 8,
+                    title: 'Coral da Terceira Idade',
+                    description: 'Grupo vocal que se encontra para ensaios e apresentações.',
+                    organizer: { id: 25, name: 'Silvia Rodrigues', avatar: 'https://images.unsplash.com/photo-1567532939604-b6b5b0db2604?w=200&h=200&fit=crop&crop=faces' },
+                    schedule: 'Quarta 15:00 - 17:00',
+                    participants: [],
+                    friends: [],
+                    image: 'https://images.unsplash.com/photo-1507676184212-d03ab07a01bf?w=800&q=80',
+                    category: 'Música'
+                }
+            ],
+            userParticipations: [2], // IDs das atividades que o usuário participa
+            favorites: [1], // IDs das atividades favoritas
+            currentActivity: null,
+            currentViewedUser: null, // Usuário sendo visualizado
+            previousScreen: null, // Tela anterior para voltar
+            newActivity: {},
+            chatMessages: {
+                1: [
+                    { user: { id: 2, name: 'Maria Chagas', avatar: 'https://images.unsplash.com/photo-1609220136736-443140cffec6?w=200&h=200&fit=crop&crop=faces' }, text: 'Olá pessoal! Animados para a aula?', time: '10:30' },
+                    { user: { id: 3, name: 'João Silva', avatar: 'https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=200&h=200&fit=crop&crop=faces' }, text: 'Sim! Será minha primeira aula de tango!', time: '10:35' },
+                    { user: { id: 2, name: 'Maria Chagas', avatar: 'https://images.unsplash.com/photo-1609220136736-443140cffec6?w=200&h=200&fit=crop&crop=faces' }, text: 'Que legal! Você vai adorar, é muito divertido!', time: '10:36' },
+                    { user: { id: 4, name: 'Pedro Costa', avatar: 'https://images.unsplash.com/photo-1595397306574-ddc88e5ec85e?w=200&h=200&fit=crop&crop=faces' }, text: 'Alguém sabe se precisa levar sapato especial?', time: '11:15' },
+                    { user: { id: 2, name: 'Maria Chagas', avatar: 'https://images.unsplash.com/photo-1609220136736-443140cffec6?w=200&h=200&fit=crop&crop=faces' }, text: 'Não precisa não! Qualquer sapato confortável serve para começar.', time: '11:20' }
+                ],
+                2: [
+                    { user: { id: 11, name: 'Neide José', avatar: 'https://images.unsplash.com/photo-1590650153855-d9e808231d41?w=200&h=200&fit=crop&crop=faces' }, text: 'Oi gente! Já escolheram o livro da próxima semana?', time: '09:00' },
+                    { user: { id: 1, name: 'Anna Lucia', avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop&crop=faces' }, text: 'Ainda não! Tem alguma sugestão?', time: '09:15', own: true }
+                ]
+            },
+            privateMessages: {
+                // Chave é o ID do outro usuário
+                7: [
+                    { user: { id: 7, name: 'Mariana Santos', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=faces' }, text: 'Oi Anna! Tudo bem?', time: '14:20' },
+                    { user: { id: 1, name: 'Anna Lucia', avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop&crop=faces' }, text: 'Oi Mariana! Tudo ótimo e você?', time: '14:22', own: true },
+                    { user: { id: 7, name: 'Mariana Santos', avatar: 'https://images.unsplash.com/photo-1580489944761-15a19d654956?w=200&h=200&fit=crop&crop=faces' }, text: 'Também! Vamos na aula de yoga amanhã?', time: '14:23' },
+                    { user: { id: 1, name: 'Anna Lucia', avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop&crop=faces' }, text: 'Vamos sim! Te encontro lá às 9h.', time: '14:25', own: true }
+                ],
+                8: [
+                    { user: { id: 8, name: 'Fernando Souza', avatar: 'https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=200&h=200&fit=crop&crop=faces' }, text: 'Anna, você já leu o livro dessa semana?', time: '10:15' },
+                    { user: { id: 1, name: 'Anna Lucia', avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=200&h=200&fit=crop&crop=faces' }, text: 'Já! Adorei a história. E você?', time: '10:30', own: true },
+                    { user: { id: 8, name: 'Fernando Souza', avatar: 'https://images.unsplash.com/photo-1531384441138-2736e62e0919?w=200&h=200&fit=crop&crop=faces' }, text: 'Terminei ontem. Muito bom mesmo!', time: '10:32' }
+                ]
+            },
+            calendarState: {
+                currentMonth: new Date().getMonth(),
+                currentYear: new Date().getFullYear(),
+                selectedDate: null
+            }
+        };
+
+        // Navigation
+        function navigateTo(screenId) {
+            // Map screen names to actual element IDs
+            const screenMap = {
+                'home': 'home-screen',
+                'profile': 'profile-screen',
+                'detail': 'detail-screen'
+            };
+
+            const actualScreenId = screenMap[screenId] || screenId;
+
+            document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+            document.getElementById(actualScreenId).classList.add('active');
+
+            // Update nav buttons
+            document.querySelectorAll('.nav-btn').forEach(btn => btn.classList.remove('active'));
+            if (screenId === 'home' || screenId === 'home-screen') {
+                document.querySelector('.nav-btn:nth-child(1)').classList.add('active');
+            } else if (screenId.includes('create-activity')) {
+                document.querySelector('.nav-btn:nth-child(2)').classList.add('active');
+            } else if (screenId === 'profile' || screenId === 'profile-screen' || screenId === 'edit-profile' || screenId === 'preferences' || screenId === 'favorites' || screenId === 'friends-screen') {
+                document.querySelector('.nav-btn:nth-child(3)').classList.add('active');
+            }
+
+            // Show/hide chat button
+            const chatBtn = document.getElementById('chat-btn');
+            if (screenId === 'detail-screen' || screenId === 'detail') {
+                chatBtn.classList.remove('hidden');
+            } else {
+                chatBtn.classList.add('hidden');
+            }
+
+            // Load screen content
+            if (screenId === 'detail-screen' || screenId === 'detail') {
+                loadActivityDetail();
+            } else if (screenId === 'favorites') {
+                loadFavorites();
+            } else if (screenId === 'create-activity-2') {
+                initCalendar();
+            } else if (screenId === 'profile' || screenId === 'profile-screen') {
+                loadOwnProfile();
+            } else if (screenId === 'edit-profile') {
+                loadEditProfile();
+            } else if (screenId === 'friends-screen') {
+                loadFriendsScreen();
+            }
+        }
+
+        // Load Edit Profile with current values
+        function loadEditProfile() {
+            const user = state.currentUser;
+
+            // Load avatar
+            document.getElementById('edit-profile-avatar').style.backgroundImage = `url('${user.avatar}')`;
+
+            // Load basic fields
+            document.getElementById('edit-name').value = user.name;
+            document.getElementById('edit-birthdate').value = user.birthdate;
+            document.getElementById('edit-city').value = user.city;
+            document.getElementById('edit-bio').value = user.bio;
+
+            // Load preferences - uncheck all first
+            const checkboxes = document.querySelectorAll('.preference-checkbox input[type="checkbox"]');
+            checkboxes.forEach(cb => cb.checked = false);
+
+            // Check the ones user has selected
+            user.preferences.forEach(pref => {
+                const checkbox = Array.from(checkboxes).find(cb => cb.value === pref);
+                if (checkbox) checkbox.checked = true;
+            });
+        }
+
+        // Load Friends Screen
+        function loadFriendsScreen() {
+            const user = state.currentUser;
+
+            // Get friends, received requests, and sent requests
+            const friends = user.friends.map(id => state.users[id]).filter(u => u);
+            const receivedRequests = user.receivedFriendRequests.map(id => state.users[id]).filter(u => u);
+            const sentRequests = user.sentFriendRequests.map(id => state.users[id]).filter(u => u);
+
+            // Update counts
+            document.getElementById('friends-count').textContent = friends.length;
+            document.getElementById('received-count').textContent = receivedRequests.length;
+            document.getElementById('sent-count').textContent = sentRequests.length;
+
+            // Render friends list
+            const friendsList = document.getElementById('friends-list');
+            if (friends.length === 0) {
+                friendsList.innerHTML = '<div class="friends-empty">Você ainda não tem amigos.</div>';
+            } else {
+                friendsList.innerHTML = friends.map(friend => `
+                    <div class="friend-card">
+                        <img src="${friend.avatar}" alt="${friend.name}" class="friend-avatar" onclick="viewUserProfile(${friend.id})">
+                        <div class="friend-info">
+                            <div class="friend-name">${friend.name}</div>
+                            <div class="friend-details">
+                                <span>${friend.age} anos</span>
+                                <span>•</span>
+                                <span>${friend.city}</span>
+                            </div>
+                        </div>
+                        <div class="friend-actions">
+                            <button class="friend-action-btn red" onclick="removeFriend(${friend.id})">
+                                <span class="material-icons" style="font-size: 18px;">person_remove</span>
+                                <span>Remover</span>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Render received requests
+            const receivedList = document.getElementById('received-requests-list');
+            if (receivedRequests.length === 0) {
+                receivedList.innerHTML = '<div class="friends-empty">Nenhuma solicitação recebida.</div>';
+            } else {
+                receivedList.innerHTML = receivedRequests.map(friend => `
+                    <div class="friend-card">
+                        <img src="${friend.avatar}" alt="${friend.name}" class="friend-avatar" onclick="viewUserProfile(${friend.id})">
+                        <div class="friend-info">
+                            <div class="friend-name">${friend.name}</div>
+                            <div class="friend-details">
+                                <span>${friend.age} anos</span>
+                                <span>•</span>
+                                <span>${friend.city}</span>
+                            </div>
+                        </div>
+                        <div class="friend-actions">
+                            <button class="friend-action-btn green" onclick="acceptFriendRequest(${friend.id})">
+                                <span class="material-icons" style="font-size: 18px;">check</span>
+                                <span>Aceitar</span>
+                            </button>
+                            <button class="friend-action-btn red" onclick="declineFriendRequest(${friend.id})">
+                                <span class="material-icons" style="font-size: 18px;">close</span>
+                                <span>Recusar</span>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Render sent requests
+            const sentList = document.getElementById('sent-requests-list');
+            if (sentRequests.length === 0) {
+                sentList.innerHTML = '<div class="friends-empty">Nenhuma solicitação enviada.</div>';
+            } else {
+                sentList.innerHTML = sentRequests.map(friend => `
+                    <div class="friend-card">
+                        <img src="${friend.avatar}" alt="${friend.name}" class="friend-avatar" onclick="viewUserProfile(${friend.id})">
+                        <div class="friend-info">
+                            <div class="friend-name">${friend.name}</div>
+                            <div class="friend-details">
+                                <span>${friend.age} anos</span>
+                                <span>•</span>
+                                <span>${friend.city}</span>
+                            </div>
+                        </div>
+                        <div class="friend-actions">
+                            <button class="friend-action-btn gray" onclick="cancelFriendRequest(${friend.id})">
+                                <span class="material-icons" style="font-size: 18px;">close</span>
+                                <span>Cancelar</span>
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Remove friend with confirmation
+        function removeFriend(userId) {
+            const friend = state.users[userId];
+            showModal(
+                'Remover Amigo',
+                `Tem certeza que deseja remover ${friend.name} da sua lista de amigos?`,
+                () => {
+                    // Remove from current user's friends
+                    state.currentUser.friends = state.currentUser.friends.filter(id => id !== userId);
+                    state.users[1].friends = state.currentUser.friends;
+
+                    // Remove from the other user's friends
+                    const otherUser = state.users[userId];
+                    if (otherUser && otherUser.friends) {
+                        otherUser.friends = otherUser.friends.filter(id => id !== state.currentUser.id);
+                    }
+
+                    // Reload the friends screen
+                    loadFriendsScreen();
+                }
+            );
+        }
+
+        // Accept friend request
+        function acceptFriendRequest(userId) {
+            // Remove from received requests
+            state.currentUser.receivedFriendRequests = state.currentUser.receivedFriendRequests.filter(id => id !== userId);
+            state.users[1].receivedFriendRequests = state.currentUser.receivedFriendRequests;
+
+            // Remove from the other user's sent requests
+            const otherUser = state.users[userId];
+            if (otherUser && otherUser.sentFriendRequests) {
+                otherUser.sentFriendRequests = otherUser.sentFriendRequests.filter(id => id !== state.currentUser.id);
+            }
+
+            // Add to both users' friends lists
+            state.currentUser.friends.push(userId);
+            state.users[1].friends = state.currentUser.friends;
+
+            if (otherUser) {
+                if (!otherUser.friends) otherUser.friends = [];
+                otherUser.friends.push(state.currentUser.id);
+            }
+
+            // Reload the friends screen
+            loadFriendsScreen();
+        }
+
+        // Decline friend request
+        function declineFriendRequest(userId) {
+            // Remove from received requests
+            state.currentUser.receivedFriendRequests = state.currentUser.receivedFriendRequests.filter(id => id !== userId);
+            state.users[1].receivedFriendRequests = state.currentUser.receivedFriendRequests;
+
+            // Remove from the other user's sent requests
+            const otherUser = state.users[userId];
+            if (otherUser && otherUser.sentFriendRequests) {
+                otherUser.sentFriendRequests = otherUser.sentFriendRequests.filter(id => id !== state.currentUser.id);
+            }
+
+            // Reload the friends screen
+            loadFriendsScreen();
+        }
+
+        // Cancel sent friend request
+        function cancelFriendRequest(userId) {
+            // Remove from sent requests
+            state.currentUser.sentFriendRequests = state.currentUser.sentFriendRequests.filter(id => id !== userId);
+            state.users[1].sentFriendRequests = state.currentUser.sentFriendRequests;
+
+            // Remove from the other user's received requests
+            const otherUser = state.users[userId];
+            if (otherUser && otherUser.receivedFriendRequests) {
+                otherUser.receivedFriendRequests = otherUser.receivedFriendRequests.filter(id => id !== state.currentUser.id);
+            }
+
+            // Reload the friends screen
+            loadFriendsScreen();
+        }
+
+        // Render Activities
+        function renderActivities(activities, containerId) {
+            const container = document.getElementById(containerId);
+
+            if (activities.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state-vertical">
+                        <span class="material-icons md-60">search_off</span>
+                        <p>Nenhuma atividade encontrada.</p>
+                        <p class="empty-state-subtitle">Tente outro filtro ou busca!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Separar favoritos e não-favoritos
+            const favoriteActivities = activities.filter(a => state.favorites.includes(a.id));
+            const nonFavoriteActivities = activities.filter(a => !state.favorites.includes(a.id));
+
+            // Concatenar: favoritos primeiro
+            const sortedActivities = [...favoriteActivities, ...nonFavoriteActivities];
+
+            container.innerHTML = sortedActivities.map(activity => {
+                const isFavorite = state.favorites.includes(activity.id);
+                return `
+                    <div class="activity-card" onclick="viewActivity(${activity.id})">
+                        <div class="activity-card-image" style="background-image: url('${activity.image}')">
+                            <div class="favorite-star ${isFavorite ? 'favorited' : 'not-favorited'}" onclick="toggleFavoriteFromCard(${activity.id}, event)">
+                                <span class="material-icons">${isFavorite ? 'star' : 'star_outline'}</span>
+                            </div>
+                        </div>
+                        <div class="activity-card-body">
+                            <h3>${activity.title}</h3>
+                            <div class="activity-meta">
+                                <span class="material-icons md-20">schedule</span>
+                                <span>${activity.schedule}</span>
+                            </div>
+                            <div class="activity-stats">
+                                <span><span class="material-icons md-20">people</span> ${activity.participants.length}</span>
+                                <span><span class="material-icons md-20 icon-friends">sentiment_very_satisfied</span> ${activity.friends.length}</span>
+                            </div>
+                            <button class="learn-more-btn" onclick="event.stopPropagation(); viewActivity(${activity.id})">Saiba mais</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderUpcomingActivities() {
+            const upcoming = state.activities.filter(a => state.userParticipations.includes(a.id));
+            const container = document.getElementById('upcoming-activities');
+
+            if (upcoming.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <span class="material-icons md-48">event_busy</span>
+                        <p>Você ainda não está participando de nenhuma atividade.</p>
+                        <p class="empty-state-subtitle">Explore as atividades disponíveis abaixo!</p>
+                    </div>
+                `;
+                container.style.display = 'flex';
+                container.style.justifyContent = 'center';
+                return;
+            }
+
+            container.style.display = 'flex';
+            container.innerHTML = upcoming.map(activity => `
+                <div class="activity-card-small" style="background-image: url('${activity.image}')" onclick="viewActivity(${activity.id})">
+                    <div class="activity-card-small-content">
+                        <h3>${activity.title}</h3>
+                        <p><span class="material-icons md-20">schedule</span> ${activity.schedule}</p>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // View Activity
+        function viewActivity(id) {
+            state.currentActivity = state.activities.find(a => a.id === id);
+            navigateTo('detail-screen');
+        }
+
+        function loadActivityDetail() {
+            const activity = state.currentActivity;
+            if (!activity) return;
+
+            document.getElementById('detail-hero').style.backgroundImage = `url('${activity.image}')`;
+            document.getElementById('detail-title').textContent = activity.title;
+            document.getElementById('detail-organizer-avatar').style.backgroundImage = `url('${activity.organizer.avatar}')`;
+            document.getElementById('detail-organizer-name').textContent = activity.organizer.name;
+
+            // Tornar organizador clicável
+            document.getElementById('detail-organizer').onclick = () => viewUserProfile(activity.organizer.id, 'detail-screen');
+            document.getElementById('detail-description').textContent = activity.description;
+            document.getElementById('detail-time').textContent = activity.schedule;
+
+            document.getElementById('detail-participants').innerHTML = activity.participants.map(p =>
+                `<div class="participant-avatar" style="background-image: url('${p.avatar}'); cursor: pointer;" onclick="viewUserProfile(${p.id}, 'detail-screen')" title="${state.users[p.id]?.name || ''}"></div>`
+            ).join('');
+
+            document.getElementById('detail-friends').innerHTML = activity.friends.map(f =>
+                `<div class="participant-avatar" style="background-image: url('${f.avatar}'); cursor: pointer;" onclick="viewUserProfile(${f.id}, 'detail-screen')" title="${state.users[f.id]?.name || ''}"></div>`
+            ).join('');
+
+            // Update action button
+            const actionBtn = document.getElementById('action-btn');
+            const isParticipating = state.userParticipations.includes(activity.id);
+            actionBtn.className = `action-button ${isParticipating ? 'leave' : 'participate'}`;
+            actionBtn.innerHTML = isParticipating ? 'Deixar de participar' : '<span class="material-icons">waving_hand</span> PARTICIPAR';
+
+            // Update favorite button
+            const favBtn = document.getElementById('favorite-btn');
+            const isFavorite = state.favorites.includes(activity.id);
+            favBtn.className = isFavorite ? 'icon-btn active' : 'icon-btn';
+            favBtn.innerHTML = `<span class="material-icons">${isFavorite ? 'star' : 'star_outline'}</span>`;
+        }
+
+        // Participation
+        function handleParticipation() {
+            const activity = state.currentActivity;
+            const isParticipating = state.userParticipations.includes(activity.id);
+
+            if (isParticipating) {
+                showModal('Deixar atividade?', 'Deseja realmente sair desta atividade?', [
+                    { text: 'Cancelar', class: 'cancel', action: closeModal },
+                    { text: 'Confirmar', class: 'confirm', action: () => {
+                        state.userParticipations = state.userParticipations.filter(id => id !== activity.id);
+                        closeModal();
+                        showModal('Saiu da atividade', 'Você saiu da atividade!', [
+                            { text: 'Voltar', class: 'primary', action: () => { closeModal(); loadActivityDetail(); } }
+                        ], '<span class="material-icons md-60" style="color: #4CAF50;">check_circle</span>');
+                        renderUpcomingActivities();
+                    }}
+                ]);
+            } else {
+                showModal('Confirmar participação', 'Gostaria de confirmar a participação?', [
+                    { text: 'Cancelar', class: 'cancel', action: closeModal },
+                    { text: 'Confirmar', class: 'confirm', action: () => {
+                        state.userParticipations.push(activity.id);
+                        closeModal();
+                        showModal('Participação confirmada', '', [
+                            { text: 'Voltar', class: 'primary', action: () => { closeModal(); loadActivityDetail(); } }
+                        ], '<span class="material-icons md-60" style="color: #4CAF50;">check_circle</span>');
+                        renderUpcomingActivities();
+                    }}
+                ]);
+            }
+        }
+
+        // Favorites
+        document.getElementById('favorite-btn').addEventListener('click', () => {
+            const activity = state.currentActivity;
+            if (state.favorites.includes(activity.id)) {
+                state.favorites = state.favorites.filter(id => id !== activity.id);
+            } else {
+                state.favorites.push(activity.id);
+            }
+            loadActivityDetail();
+            applyFilters(); // Atualizar lista principal
+        });
+
+        function loadFavorites() {
+            const favorites = state.activities.filter(a => state.favorites.includes(a.id));
+            const container = document.getElementById('favorites-list');
+
+            if (favorites.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state-vertical">
+                        <span class="material-icons md-60">star_outline</span>
+                        <p>Você ainda não tem atividades favoritas.</p>
+                        <p class="empty-state-subtitle">Toque na estrela dos eventos que você gostou!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            renderActivities(favorites, 'favorites-list');
+        }
+
+        function toggleFavoriteFromCard(activityId, event) {
+            event.stopPropagation();
+
+            if (state.favorites.includes(activityId)) {
+                state.favorites = state.favorites.filter(id => id !== activityId);
+            } else {
+                state.favorites.push(activityId);
+            }
+
+            // Re-renderizar a lista atual
+            applyFilters();
+        }
+
+        // Filters
+        let activeFilter = 'todas';
+        let friendsFilterActive = false;
+
+        function filterByCategory(category) {
+            activeFilter = category;
+            applyFilters();
+        }
+
+        function toggleFriendsFilter() {
+            const checkbox = document.getElementById('friends-filter');
+            const container = document.getElementById('friends-filter-container');
+
+            checkbox.checked = !checkbox.checked;
+            friendsFilterActive = checkbox.checked;
+
+            if (checkbox.checked) {
+                container.classList.add('checked');
+            } else {
+                container.classList.remove('checked');
+            }
+
+            applyFilters();
+        }
+
+        function applyFilters() {
+            const searchQuery = document.getElementById('search-input').value.toLowerCase();
+
+            let filtered = state.activities;
+
+            // Filter by category
+            if (activeFilter !== 'todas') {
+                filtered = filtered.filter(a => a.category === activeFilter);
+            }
+
+            // Filter by friends (independent layer)
+            if (friendsFilterActive) {
+                filtered = filtered.filter(a => a.friends.length > 0);
+            }
+
+            // Filter by search query
+            if (searchQuery) {
+                filtered = filtered.filter(a =>
+                    a.title.toLowerCase().includes(searchQuery) ||
+                    a.description.toLowerCase().includes(searchQuery) ||
+                    a.category.toLowerCase().includes(searchQuery) ||
+                    a.organizer.name.toLowerCase().includes(searchQuery)
+                );
+            }
+
+            renderActivities(filtered, 'activity-list');
+        }
+
+        // Search
+        document.getElementById('search-input').addEventListener('input', () => {
+            applyFilters();
+        });
+
+        // Profile
+        function saveProfile() {
+            // Capturar valores básicos
+            state.currentUser.name = document.getElementById('edit-name').value;
+            state.currentUser.birthdate = document.getElementById('edit-birthdate').value;
+            state.currentUser.city = document.getElementById('edit-city').value;
+            state.currentUser.bio = document.getElementById('edit-bio').value;
+
+            // Calcular idade baseada na data de nascimento
+            const birthDate = new Date(state.currentUser.birthdate);
+            const today = new Date();
+            let age = today.getFullYear() - birthDate.getFullYear();
+            const monthDiff = today.getMonth() - birthDate.getMonth();
+            if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            state.currentUser.age = age;
+
+            // Capturar preferências selecionadas
+            const checkboxes = document.querySelectorAll('.preference-checkbox input[type="checkbox"]:checked');
+            state.currentUser.preferences = Array.from(checkboxes).map(cb => cb.value);
+
+            // Atualizar também no objeto users para consistência
+            state.users[1].name = state.currentUser.name;
+            state.users[1].age = state.currentUser.age;
+            state.users[1].city = state.currentUser.city;
+            state.users[1].bio = state.currentUser.bio;
+            state.users[1].preferences = state.currentUser.preferences;
+
+            showModal('Perfil atualizado!', 'Suas alterações foram salvas com sucesso.', [
+                { text: 'OK', class: 'primary', action: () => { closeModal(); navigateTo('profile'); } }
+            ], '<span class="material-icons md-60" style="color: #4CAF50;">check_circle</span>');
+        }
+
+        function addPreference() {
+            const pref = prompt('Digite a nova preferência:');
+            if (pref) {
+                state.currentUser.preferences.push(pref);
+                document.getElementById('preferences-list').innerHTML += `<span class="preference-tag">${pref}</span>`;
+            }
+        }
+
+        // Create Activity Wizard
+        function nextStep(currentStep) {
+            if (currentStep === 1) {
+                const title = document.getElementById('create-title').value;
+                const description = document.getElementById('create-description').value;
+                if (!title || !description) {
+                    alert('Por favor, preencha todos os campos!');
+                    return;
+                }
+                state.newActivity.title = title;
+                state.newActivity.description = description;
+                navigateTo('create-activity-2');
+            } else if (currentStep === 2) {
+                const timeStart = document.getElementById('create-time-start').value;
+                const timeEnd = document.getElementById('create-time-end').value;
+                if (!timeStart || !timeEnd) {
+                    alert('Por favor, selecione o horário!');
+                    return;
+                }
+                state.newActivity.schedule = `${timeStart} - ${timeEnd}`;
+                navigateTo('create-activity-3');
+            }
+        }
+
+        function createActivity() {
+            const cep = document.getElementById('create-cep').value;
+            const number = document.getElementById('create-number').value;
+
+            if (!cep || !number) {
+                alert('Por favor, preencha todos os campos!');
+                return;
+            }
+
+            showModal('Criar Evento?', 'Gostaria de finalizar a criação?', [
+                { text: 'Cancelar', class: 'cancel', action: closeModal },
+                { text: 'Criar', class: 'confirm', action: () => {
+                    const newActivity = {
+                        id: state.activities.length + 1,
+                        ...state.newActivity,
+                        organizer: state.currentUser,
+                        participants: [],
+                        friends: [],
+                        image: 'https://images.unsplash.com/photo-1511632765486-a01980e01a18?w=800&q=80',
+                        category: 'Outros'
+                    };
+                    state.activities.push(newActivity);
+                    state.userParticipations.push(newActivity.id);
+
+                    closeModal();
+                    showModal('Evento criado!', '', [
+                        { text: 'Voltar', class: 'primary', action: () => {
+                            closeModal();
+                            navigateTo('home');
+                            renderActivities(state.activities, 'activity-list');
+                            renderUpcomingActivities();
+                        }}
+                    ], '<span class="material-icons md-60" style="color: #4CAF50;">check_circle</span>');
+
+                    // Reset form
+                    document.getElementById('create-title').value = '';
+                    document.getElementById('create-description').value = '';
+                    state.newActivity = {};
+                }}
+            ]);
+        }
+
+        // Calendar
+        // Calendar Functions
+        function initCalendar() {
+            const today = new Date();
+            state.calendarState.currentMonth = today.getMonth();
+            state.calendarState.currentYear = today.getFullYear();
+            // Selecionar automaticamente amanhã como data padrão
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            state.calendarState.selectedDate = tomorrow.getDate();
+            renderCalendar();
+        }
+
+        function renderCalendar() {
+            const cal = state.calendarState;
+            const grid = document.getElementById('calendar-grid');
+            const monthLabel = document.getElementById('calendar-month');
+
+            // Atualizar label do mês
+            const monthNames = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                               'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            monthLabel.textContent = `${monthNames[cal.currentMonth]} ${cal.currentYear}`;
+
+            // Dias da semana (headers)
+            const days = ['Dom', 'Seg', 'Ter', 'Qua', 'Qui', 'Sex', 'Sáb'];
+            let html = days.map(d => `<div class="calendar-day header">${d}</div>`).join('');
+
+            // Calcular primeiro dia do mês e quantos dias tem
+            const firstDay = new Date(cal.currentYear, cal.currentMonth, 1).getDay();
+            const daysInMonth = new Date(cal.currentYear, cal.currentMonth + 1, 0).getDate();
+            const today = new Date();
+            const isCurrentMonth = cal.currentMonth === today.getMonth() && cal.currentYear === today.getFullYear();
+
+            // Adicionar células vazias para alinhar com o dia da semana correto
+            for (let i = 0; i < firstDay; i++) {
+                html += `<div class="calendar-day empty"></div>`;
+            }
+
+            // Adicionar dias do mês
+            for (let day = 1; day <= daysInMonth; day++) {
+                const isPast = isCurrentMonth && day < today.getDate();
+                const isSelected = day === cal.selectedDate;
+                const isToday = isCurrentMonth && day === today.getDate();
+
+                let className = 'calendar-day';
+                if (isPast) className += ' past';
+                if (isSelected) className += ' selected';
+                if (isToday) className += ' today';
+
+                const onclick = isPast ? '' : `onclick="selectDate(${day})"`;
+                html += `<div class="${className}" ${onclick}>${day}</div>`;
+            }
+
+            grid.innerHTML = html;
+        }
+
+        function changeMonth(direction) {
+            const cal = state.calendarState;
+            cal.currentMonth += direction;
+
+            if (cal.currentMonth < 0) {
+                cal.currentMonth = 11;
+                cal.currentYear--;
+            } else if (cal.currentMonth > 11) {
+                cal.currentMonth = 0;
+                cal.currentYear++;
+            }
+
+            // Limpar seleção ao mudar de mês
+            cal.selectedDate = null;
+            renderCalendar();
+        }
+
+        function selectDate(day) {
+            const cal = state.calendarState;
+            const today = new Date();
+            const selectedDate = new Date(cal.currentYear, cal.currentMonth, day);
+
+            // Não permitir selecionar datas no passado
+            if (selectedDate < today.setHours(0, 0, 0, 0)) {
+                return;
+            }
+
+            cal.selectedDate = day;
+            renderCalendar();
+        }
+
+        // Modal
+        function showModal(title, message, buttons, icon = '') {
+            document.getElementById('modal-title').textContent = title;
+            document.getElementById('modal-message').textContent = message;
+            document.getElementById('modal-icon').innerHTML = icon;
+
+            document.getElementById('modal-buttons').innerHTML = buttons.map(btn =>
+                `<button class="modal-btn ${btn.class}" onclick="modalActions['${btn.text}']()">
+                    ${btn.text}
+                </button>`
+            ).join('');
+
+            // Store actions
+            window.modalActions = {};
+            buttons.forEach(btn => {
+                window.modalActions[btn.text] = btn.action;
+            });
+
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+
+        function closeModal() {
+            document.getElementById('modal-overlay').classList.remove('active');
+        }
+
+        // Chat Functions
+        function openChat() {
+            if (!state.currentActivity) return;
+
+            const activity = state.currentActivity;
+            document.getElementById('chat-activity-title').textContent = activity.title;
+
+            renderChatMessages();
+            navigateTo('chat-screen');
+
+            // Scroll to bottom
+            setTimeout(() => {
+                const messagesContainer = document.getElementById('chat-messages');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+        }
+
+        function renderChatMessages() {
+            const activityId = state.currentActivity.id;
+            const messages = state.chatMessages[activityId] || [];
+            const container = document.getElementById('chat-messages');
+
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state-vertical">
+                        <span class="material-icons md-60">chat_bubble_outline</span>
+                        <p>Nenhuma mensagem ainda.</p>
+                        <p class="empty-state-subtitle">Seja o primeiro a enviar uma mensagem!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = messages.map(msg => {
+                const isOwn = msg.user.id === state.currentUser.id || msg.own;
+                return `
+                    <div class="message ${isOwn ? 'own' : ''}">
+                        <div class="message-avatar" style="background-image: url('${msg.user.avatar}'); cursor: pointer;" onclick="viewUserProfile(${msg.user.id}, 'chat-screen')" title="${msg.user.name}"></div>
+                        <div class="message-content">
+                            ${!isOwn ? `
+                                <div class="message-header">
+                                    <span class="message-name">${msg.user.name}</span>
+                                    <span class="message-time">${msg.time}</span>
+                                </div>
+                            ` : `
+                                <div class="message-header">
+                                    <span class="message-time">${msg.time}</span>
+                                </div>
+                            `}
+                            <div class="message-bubble">${msg.text}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function sendMessage() {
+            const input = document.getElementById('chat-input');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            const activityId = state.currentActivity.id;
+            if (!state.chatMessages[activityId]) {
+                state.chatMessages[activityId] = [];
+            }
+
+            const now = new Date();
+            const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            state.chatMessages[activityId].push({
+                user: state.currentUser,
+                text: text,
+                time: time,
+                own: true
+            });
+
+            input.value = '';
+            renderChatMessages();
+
+            // Scroll to bottom
+            setTimeout(() => {
+                const messagesContainer = document.getElementById('chat-messages');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+        }
+
+        // Allow sending with Enter key
+        document.addEventListener('DOMContentLoaded', () => {
+            const chatInput = document.getElementById('chat-input');
+            if (chatInput) {
+                chatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendMessage();
+                    }
+                });
+            }
+
+            const privateChatInput = document.getElementById('private-chat-input');
+            if (privateChatInput) {
+                privateChatInput.addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        sendPrivateMessageInChat();
+                    }
+                });
+            }
+        });
+
+        // User Profile Functions
+        function viewUserProfile(userId, fromScreen = null) {
+            state.currentViewedUser = state.users[userId];
+            state.previousScreen = fromScreen || getCurrentScreen();
+
+            if (!state.currentViewedUser) {
+                console.error('Usuário não encontrado:', userId);
+                return;
+            }
+
+            navigateTo('user-profile-screen');
+            loadUserProfile();
+        }
+
+        function getCurrentScreen() {
+            const activeScreen = document.querySelector('.screen.active');
+            return activeScreen ? activeScreen.id : 'home-screen';
+        }
+
+        function loadUserProfile() {
+            const user = state.currentViewedUser;
+            if (!user) return;
+
+            // Header info
+            document.getElementById('user-profile-avatar').style.backgroundImage = `url('${user.avatar}')`;
+            document.getElementById('user-profile-name').textContent = user.name;
+            document.getElementById('user-profile-age').textContent = user.age;
+            document.getElementById('user-profile-city').textContent = user.city;
+
+            // Verified badge card
+            const verifiedBadge = document.getElementById('user-profile-verified');
+            if (user.verified) {
+                verifiedBadge.style.display = 'flex';
+            } else {
+                verifiedBadge.style.display = 'none';
+            }
+
+            // Bio
+            document.getElementById('user-profile-bio').textContent = user.bio;
+
+            // Preferences
+            const preferencesContainer = document.getElementById('user-profile-preferences');
+            preferencesContainer.className = 'user-profile-preferences';
+            preferencesContainer.innerHTML = user.preferences.map(pref =>
+                `<span class="user-profile-preference-tag">${pref}</span>`
+            ).join('');
+
+            // Common activities
+            const commonActivities = getCommonActivities(user.id);
+            const commonActivitiesContainer = document.getElementById('user-profile-common-activities');
+
+            if (commonActivities.length === 0) {
+                commonActivitiesContainer.innerHTML = `
+                    <p style="color: #999; font-size: 16px; text-align: center; padding: 20px 0;">
+                        Vocês ainda não participam de atividades em comum.
+                    </p>
+                `;
+            } else {
+                commonActivitiesContainer.className = 'user-profile-common-activities';
+                commonActivitiesContainer.innerHTML = commonActivities.map(activity => `
+                    <div class="user-profile-activity-card" onclick="viewActivity(${activity.id})">
+                        <div class="user-profile-activity-image" style="background-image: url('${activity.image}')"></div>
+                        <div class="user-profile-activity-info">
+                            <h4>${activity.title}</h4>
+                            <p><span class="material-icons md-18">schedule</span> ${activity.schedule}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+
+            // Friend button
+            updateFriendButton();
+        }
+
+        function getCommonActivities(userId) {
+            const user = state.users[userId];
+            if (!user) return [];
+
+            // Atividades que o usuário visualizado participa
+            const userActivities = user.activities || [];
+
+            // Atividades que o usuário atual participa
+            const currentUserActivities = state.userParticipations;
+
+            // Interseção
+            const commonActivityIds = userActivities.filter(id => currentUserActivities.includes(id));
+
+            // Retorna objetos de atividade completos
+            return state.activities.filter(a => commonActivityIds.includes(a.id));
+        }
+
+        function updateFriendButton() {
+            const user = state.currentViewedUser;
+            if (!user) return;
+
+            const friendBtn = document.getElementById('friend-action-btn');
+            const friendText = document.getElementById('friend-action-text');
+            const isFriend = state.currentUser.friends.includes(user.id);
+            const requestSent = state.currentUser.sentFriendRequests.includes(user.id);
+            const requestReceived = state.currentUser.receivedFriendRequests.includes(user.id);
+
+            if (isFriend) {
+                // Já é amigo
+                friendBtn.style.background = '#F44336';
+                friendBtn.style.opacity = '1';
+                friendBtn.style.cursor = 'pointer';
+                friendBtn.disabled = false;
+                friendBtn.querySelector('.material-icons').textContent = 'person_remove';
+                friendText.textContent = 'Remover Amigo';
+            } else if (requestSent) {
+                // Solicitação enviada e pendente
+                friendBtn.style.background = '#9E9E9E';
+                friendBtn.style.opacity = '0.7';
+                friendBtn.style.cursor = 'not-allowed';
+                friendBtn.disabled = true;
+                friendBtn.querySelector('.material-icons').textContent = 'schedule';
+                friendText.textContent = 'Solicitação Enviada';
+            } else if (requestReceived) {
+                // Solicitação recebida - pode aceitar
+                friendBtn.style.background = '#4CAF50';
+                friendBtn.style.opacity = '1';
+                friendBtn.style.cursor = 'pointer';
+                friendBtn.disabled = false;
+                friendBtn.querySelector('.material-icons').textContent = 'check';
+                friendText.textContent = 'Aceitar Solicitação';
+            } else {
+                // Nenhuma relação - pode enviar solicitação
+                friendBtn.style.background = '#4CAF50';
+                friendBtn.style.opacity = '1';
+                friendBtn.style.cursor = 'pointer';
+                friendBtn.disabled = false;
+                friendBtn.querySelector('.material-icons').textContent = 'person_add';
+                friendText.textContent = 'Adicionar Amigo';
+            }
+        }
+
+        function goBackFromUserProfile() {
+            const previousScreen = state.previousScreen || 'home-screen';
+            navigateTo(previousScreen);
+        }
+
+        function toggleFriend() {
+            const user = state.currentViewedUser;
+            if (!user) return;
+
+            const isFriend = state.currentUser.friends.includes(user.id);
+            const requestSent = state.currentUser.sentFriendRequests.includes(user.id);
+            const requestReceived = state.currentUser.receivedFriendRequests.includes(user.id);
+
+            if (isFriend) {
+                // Remover amigo bilateral
+                showModal(
+                    'Remover amigo?',
+                    `Deseja remover ${user.name} da sua lista de amigos?`,
+                    [
+                        { text: 'Cancelar', class: 'primary', action: closeModal },
+                        { text: 'Remover', class: 'cancel', action: () => {
+                            state.currentUser.friends = state.currentUser.friends.filter(id => id !== user.id);
+                            closeModal();
+                            showModal(
+                                'Amigo removido',
+                                `${user.name} foi removido da sua lista de amigos.`,
+                                [{ text: 'OK', class: 'primary', action: () => { closeModal(); updateFriendButton(); } }],
+                                '<span class="material-icons md-60" style="color: #42A5F5;">check_circle</span>'
+                            );
+                        }}
+                    ]
+                );
+            } else if (requestSent) {
+                // Solicitação já enviada - não faz nada (botão desabilitado)
+                return;
+            } else if (requestReceived) {
+                // Aceitar solicitação recebida
+                showModal(
+                    'Aceitar solicitação?',
+                    `Deseja aceitar a solicitação de amizade de ${user.name}?`,
+                    [
+                        { text: 'Recusar', class: 'cancel', action: () => {
+                            // Remove da lista de solicitações recebidas
+                            state.currentUser.receivedFriendRequests = state.currentUser.receivedFriendRequests.filter(id => id !== user.id);
+                            closeModal();
+                            showModal(
+                                'Solicitação recusada',
+                                `Você recusou a solicitação de amizade.`,
+                                [{ text: 'OK', class: 'primary', action: () => { closeModal(); updateFriendButton(); } }],
+                                '<span class="material-icons md-60" style="color: #42A5F5;">info</span>'
+                            );
+                        }},
+                        { text: 'Aceitar', class: 'confirm', action: () => {
+                            // Remove da lista de solicitações recebidas
+                            state.currentUser.receivedFriendRequests = state.currentUser.receivedFriendRequests.filter(id => id !== user.id);
+                            // Adiciona aos amigos bilateralmente
+                            state.currentUser.friends.push(user.id);
+                            closeModal();
+                            showModal(
+                                'Solicitação aceita!',
+                                `Você e ${user.name} agora são amigos!`,
+                                [{ text: 'OK', class: 'primary', action: () => { closeModal(); updateFriendButton(); } }],
+                                '<span class="material-icons md-60" style="color: #4CAF50;">check_circle</span>'
+                            );
+                        }}
+                    ]
+                );
+            } else {
+                // Enviar solicitação de amizade
+                showModal(
+                    'Enviar solicitação?',
+                    `Deseja enviar uma solicitação de amizade para ${user.name}?`,
+                    [
+                        { text: 'Cancelar', class: 'primary', action: closeModal },
+                        { text: 'Enviar', class: 'confirm', action: () => {
+                            state.currentUser.sentFriendRequests.push(user.id);
+                            closeModal();
+                            showModal(
+                                'Solicitação enviada!',
+                                `Sua solicitação de amizade foi enviada para ${user.name}.`,
+                                [{ text: 'OK', class: 'primary', action: () => { closeModal(); updateFriendButton(); } }],
+                                '<span class="material-icons md-60" style="color: #4CAF50;">check_circle</span>'
+                            );
+                        }}
+                    ]
+                );
+            }
+        }
+
+        function sendPrivateMessage() {
+            const user = state.currentViewedUser;
+            if (!user) return;
+
+            // Abrir chat privado com o usuário
+            openPrivateChat(user.id);
+        }
+
+        // Private Chat Functions
+        function openPrivateChat(userId) {
+            const user = state.users[userId];
+            if (!user) return;
+
+            state.currentViewedUser = user;
+            state.previousScreen = getCurrentScreen();
+
+            // Configurar o header do chat
+            document.getElementById('private-chat-avatar').style.backgroundImage = `url('${user.avatar}')`;
+            document.getElementById('private-chat-username').textContent = user.name;
+
+            // Renderizar mensagens
+            renderPrivateMessages(userId);
+
+            navigateTo('private-chat-screen');
+
+            // Scroll to bottom
+            setTimeout(() => {
+                const messagesContainer = document.getElementById('private-chat-messages');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+        }
+
+        function renderPrivateMessages(userId) {
+            const messages = state.privateMessages[userId] || [];
+            const container = document.getElementById('private-chat-messages');
+
+            if (messages.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state-vertical">
+                        <span class="material-icons md-60">chat_bubble_outline</span>
+                        <p>Nenhuma mensagem ainda.</p>
+                        <p class="empty-state-subtitle">Seja o primeiro a enviar uma mensagem!</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = messages.map(msg => {
+                const isOwn = msg.user.id === state.currentUser.id || msg.own;
+                return `
+                    <div class="message ${isOwn ? 'own' : ''}">
+                        <div class="message-avatar" style="background-image: url('${msg.user.avatar}');"></div>
+                        <div class="message-content">
+                            ${!isOwn ? `
+                                <div class="message-header">
+                                    <span class="message-name">${msg.user.name}</span>
+                                    <span class="message-time">${msg.time}</span>
+                                </div>
+                            ` : `
+                                <div class="message-header">
+                                    <span class="message-time">${msg.time}</span>
+                                </div>
+                            `}
+                            <div class="message-bubble">${msg.text}</div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function sendPrivateMessageInChat() {
+            const input = document.getElementById('private-chat-input');
+            const text = input.value.trim();
+
+            if (!text) return;
+
+            const user = state.currentViewedUser;
+            if (!user) return;
+
+            const userId = user.id;
+            if (!state.privateMessages[userId]) {
+                state.privateMessages[userId] = [];
+            }
+
+            const now = new Date();
+            const time = `${now.getHours()}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+            state.privateMessages[userId].push({
+                user: state.currentUser,
+                text: text,
+                time: time,
+                own: true
+            });
+
+            input.value = '';
+            renderPrivateMessages(userId);
+
+            // Scroll to bottom
+            setTimeout(() => {
+                const messagesContainer = document.getElementById('private-chat-messages');
+                messagesContainer.scrollTop = messagesContainer.scrollHeight;
+            }, 100);
+        }
+
+        function goBackFromPrivateChat() {
+            const previousScreen = state.previousScreen || 'user-profile-screen';
+            navigateTo(previousScreen);
+        }
+
+        // Own Profile Functions
+        function loadOwnProfile() {
+            const user = state.currentUser;
+            if (!user) return;
+
+            // Header info
+            document.getElementById('own-profile-avatar').style.backgroundImage = `url('${user.avatar}')`;
+            document.getElementById('own-profile-name').textContent = user.name;
+            document.getElementById('own-profile-age').textContent = user.age;
+            document.getElementById('own-profile-city').textContent = user.city;
+
+            // Verified badge card
+            const verifiedBadge = document.getElementById('own-profile-verified');
+            if (user.verified) {
+                verifiedBadge.style.display = 'flex';
+            } else {
+                verifiedBadge.style.display = 'none';
+            }
+
+            // Bio
+            document.getElementById('own-profile-bio').textContent = user.bio;
+
+            // Preferences
+            const preferencesContainer = document.getElementById('own-profile-preferences');
+            preferencesContainer.className = 'user-profile-preferences';
+            preferencesContainer.innerHTML = user.preferences.map(pref =>
+                `<span class="user-profile-preference-tag">${pref}</span>`
+            ).join('');
+
+            // My activities
+            const myActivities = state.activities.filter(a => state.userParticipations.includes(a.id));
+            const activitiesContainer = document.getElementById('own-profile-activities');
+
+            if (myActivities.length === 0) {
+                activitiesContainer.innerHTML = `
+                    <p style="color: #999; font-size: 16px; text-align: center; padding: 20px 0;">
+                        Você ainda não participa de nenhuma atividade.
+                    </p>
+                `;
+            } else {
+                activitiesContainer.className = 'user-profile-common-activities';
+                activitiesContainer.innerHTML = myActivities.map(activity => `
+                    <div class="user-profile-activity-card" onclick="viewActivity(${activity.id})">
+                        <div class="user-profile-activity-image" style="background-image: url('${activity.image}')"></div>
+                        <div class="user-profile-activity-info">
+                            <h4>${activity.title}</h4>
+                            <p><span class="material-icons md-18">schedule</span> ${activity.schedule}</p>
+                        </div>
+                    </div>
+                `).join('');
+            }
+        }
+
+        // Initialize
+        renderActivities(state.activities, 'activity-list');
+        renderUpcomingActivities();
+    </script>
+</body>
+</html>
