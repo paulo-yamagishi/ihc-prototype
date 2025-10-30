@@ -3114,21 +3114,28 @@
             applyFilters();
         }
 
-        function toggleFriendsFilter() {
+        function toggleFriendsFilter(event) {
             const checkbox = document.getElementById('friends-filter');
+
+            // Se não clicou diretamente na checkbox, simular click nela
+            if (event && event.target.id !== 'friends-filter') {
+                checkbox.click();
+            }
+        }
+
+        // Listener para quando a checkbox mudar de estado
+        document.getElementById('friends-filter').addEventListener('change', function() {
             const container = document.getElementById('friends-filter-container');
+            friendsFilterActive = this.checked;
 
-            checkbox.checked = !checkbox.checked;
-            friendsFilterActive = checkbox.checked;
-
-            if (checkbox.checked) {
+            if (this.checked) {
                 container.classList.add('checked');
             } else {
                 container.classList.remove('checked');
             }
 
             applyFilters();
-        }
+        });
 
         function applyFilters() {
             const searchQuery = document.getElementById('search-input').value.toLowerCase();
